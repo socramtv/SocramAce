@@ -7,7 +7,12 @@
   <p id="textoACopiar">https://www.tdtchannels.com/lists/tvradio_mpd.m3u8</p>
   <button onclick="copiarTexto()">Copiar</button>
 
-  <script>
+  
+
+
+  <p id="texto-a-copiar">Toca sobre el boton copiar y vuelve al apartado "Reproductor M3u" y pega lo copiado donde indica la imagen.</p>
+
+<script>
     function copiarTexto() {
       var texto = document.getElementById("textoACopiar").textContent;
       navigator.clipboard.writeText(texto).then(() => {
@@ -16,12 +21,7 @@
         alert("Error al copiar: " + err);
       });
     }
-  </script>
-
-
-  <p id="texto-a-copiar">Toca sobre el boton copiar y vuelve al apartado "Reproductor M3u" y pega lo copiado donde indica la imagen.</p>
-
-  <img src="https://socramtv.github.io/SocramAce/añadir_lista.jpg" alt="Descripción de la imagen">
+</script>
 
 </body>
 </html>
