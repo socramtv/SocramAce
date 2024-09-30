@@ -16,7 +16,7 @@
     function copiarTexto() {
       var texto = document.getElementById("textoACopiar").textContent;
       navigator.clipboard.writeText(texto).then(() => {
-        alert("Texto copiado, ahora vuelves al apartado -Reproductor M3u- y pegalo");
+        alert("Texto copiado");
       }).catch(err => {
         alert("Error al copiar: " + err);
       });
