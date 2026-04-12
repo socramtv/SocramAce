@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>SOCRAM TV</title>
+<meta name="theme-color" content="#e8192c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SOCRAM TV">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="description" content="Canales Acestream deportivos y partidos del día">
+<!-- PWA Manifest inline via JS -->
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='80' fill='%23e8192c'/%3E%3Ctext x='256' y='320' font-size='280' text-anchor='middle' fill='white'%3E📺%3C/text%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --red:#e8192c;--rdk:#b5121f;--gold:#f5a623;
+  --dk:#0a0a0f;--dk2:#111118;--dk3:#1a1a24;--dk4:#22222e;
+  --tx:#e8e8f0;--mu:#7a7a9a;--br:rgba(255,255,255,.07);--cd:rgba(255,255,255,.04);
+  --gn:#00c896;--bl:#4a9eff;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{background:var(--dk);color:var(--tx);font-family:'Barlow',sans-serif;min-height:100vh;overflow-x:hidden;padding-bottom:env(safe-area-inset-bottom)}
+
+/* HEADER */
+header{background:var(--dk2);border-bottom:2px solid var(--red);padding:0 16px;position:sticky;top:0;z-index:300;display:flex;align-items:center;justify-content:space-between;height:56px;box-shadow:0 4px 20px rgba(232,25,44,.3)}
+.logo{display:flex;align-items:center;gap:9px}
+.logo-ico{width:36px;height:36px;background:var(--red);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:19px;box-shadow:0 0 16px rgba(232,25,44,.6);flex-shrink:0}
+.logo-tx{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:3px;line-height:1}
+.logo-tx span{color:var(--red)}
+.live-b{display:flex;align-items:center;gap:5px;background:rgba(232,25,44,.15);border:1px solid var(--red);border-radius:4px;padding:3px 9px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;color:var(--red)}
+.dot{width:6px;height:6px;background:var(--red);border-radius:50%;animation:p 1.2s infinite}
+@keyframes p{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.65)}}
+
+/* DOWNLOAD BAR */
+.dl-bar{background:linear-gradient(90deg,#080f0a,#0e1810);border-bottom:1px solid rgba(0,200,150,.2);padding:8px 16px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.dl-txt{font-family:'Barlow Condensed',sans-serif;font-size:12px;color:var(--mu)}
+.dl-txt strong{color:var(--gn)}
+.dl-btns{display:flex;gap:6px;flex-wrap:wrap}
+.btn-dl{display:flex;align-items:center;gap:5px;background:rgba(0,200,150,.1);border:1px solid rgba(0,200,150,.3);border-radius:7px;padding:6px 11px;color:var(--gn);font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-decoration:none;transition:all .2s;white-space:nowrap}
+.btn-dl:hover{background:rgba(0,200,150,.2);border-color:var(--gn)}
+
+/* INSTALL BANNER */
+#ib{display:none;background:linear-gradient(135deg,#1c0a0e,#270f16);border-bottom:1px solid rgba(232,25,44,.3);padding:10px 16px;align-items:center;justify-content:space-between;gap:8px}
+#ib.show{display:flex}
+.ib-t{font-family:'Barlow Condensed',sans-serif;font-size:13px;color:var(--tx);flex:1}
+.ib-t strong{color:var(--red)}
+.ib-bt{display:flex;gap:6px;flex-shrink:0}
+#btnInst{background:var(--red);border:none;border-radius:7px;padding:8px 16px;color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:background .15s}
+#btnInst:hover{background:var(--rdk)}
+#btnDis{background:transparent;border:1px solid var(--br);border-radius:7px;padding:8px 10px;color:var(--mu);font-size:12px;cursor:pointer;transition:all .15s}
+#btnDis:hover{color:var(--tx)}
+
+/* STATS */
+.sbar{background:var(--dk3);border-bottom:1px solid var(--br);padding:7px 16px;display:flex;gap:16px;overflow-x:auto;scrollbar-width:none}
+.sbar::-webkit-scrollbar{display:none}
+.si{display:flex;align-items:center;gap:5px;flex-shrink:0;font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:.5px}
+.sn{font-weight:700;color:var(--red)}
+.sl{color:var(--mu)}
+
+/* SEARCH */
+.sw{background:var(--dk2);border-bottom:1px solid var(--br);padding:10px 16px}
+.sb{position:relative;display:flex;align-items:center}
+.si2{position:absolute;left:11px;font-size:14px;color:var(--mu);pointer-events:none;z-index:1}
+.sinp{width:100%;background:var(--dk3);border:1px solid var(--br);border-radius:8px;padding:9px 14px 9px 35px;color:var(--tx);font-family:'Barlow',sans-serif;font-size:14px;outline:none;transition:border-color .2s;-webkit-appearance:none}
+.sinp:focus{border-color:var(--red)}
+.sinp::placeholder{color:var(--mu)}
+
+/* TABS */
+.tw{background:var(--dk2);border-bottom:1px solid var(--br);overflow-x:auto;scrollbar-width:none;padding:0 16px;display:flex}
+.tw::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;padding:11px 13px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:600;letter-spacing:1px;color:var(--mu);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;text-transform:uppercase;user-select:none}
+.tab:hover{color:var(--tx)}
+.tab.active{color:var(--red);border-bottom-color:var(--red)}
+
+/* MAIN */
+.main{padding:14px 16px 30px;max-width:1400px;margin:0 auto}
+
+/* CAT HEADER */
+.ch{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--br)}
+.chi{font-size:20px;line-height:1;flex-shrink:0}
+.cht{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px}
+.chc{margin-left:auto;font-size:11px;color:var(--mu);font-family:'Barlow Condensed',sans-serif}
+
+/* CHANNEL GRID */
+.cg{display:grid;grid-template-columns:repeat(auto-fill,minmax(265px,1fr));gap:8px;animation:fi .3s ease}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* CHANNEL CARD */
+.cc{background:var(--cd);border:1px solid var(--br);border-radius:10px;padding:12px;display:flex;align-items:center;gap:12px;transition:all .2s;position:relative;overflow:hidden}
+.cc::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--red);opacity:0;transition:opacity .2s}
+.cc:hover{background:rgba(232,25,44,.07);border-color:rgba(232,25,44,.28);transform:translateX(2px)}
+.cc:hover::before{opacity:1}
+.clw{width:50px;height:50px;flex-shrink:0;background:var(--dk3);border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid var(--br);position:relative}
+.clg{width:42px;height:42px;object-fit:contain}
+.clb{font-family:'Bebas Neue',sans-serif;font-size:11px;color:var(--red);display:flex;align-items:center;justify-content:center;width:100%;height:100%;text-align:center;padding:2px}
+.csb{position:absolute;bottom:0;right:0;font-size:9px;background:rgba(0,0,0,.6);border-radius:3px 0 0 0;padding:1px 2px;line-height:1}
+.ci{flex:1;min-width:0}
+.cn{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:600;letter-spacing:.4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px}
+.cm{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+.cs{font-size:10px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;font-weight:600;padding:2px 5px;border-radius:3px;background:rgba(255,255,255,.06);color:var(--mu)}
+.cq{font-size:10px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;font-weight:700;padding:2px 5px;border-radius:3px}
+.qf{background:rgba(245,166,35,.15);color:var(--gold)}
+.qh{background:rgba(0,200,150,.12);color:var(--gn)}
+.q4{background:rgba(120,80,255,.15);color:#a78bfa}
+.qs{background:rgba(255,255,255,.06);color:var(--mu)}
+.ca{flex-shrink:0;display:flex;flex-direction:column;gap:4px}
+.bpl{background:var(--red);border:none;border-radius:6px;padding:7px 10px;color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all .2s;white-space:nowrap}
+.bpl:hover{background:var(--rdk);transform:scale(1.04)}
+.bcp{background:var(--dk3);border:1px solid var(--br);border-radius:6px;padding:5px 8px;color:var(--mu);font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;cursor:pointer;transition:all .2s;letter-spacing:.5px;white-space:nowrap}
+.bcp:hover{color:var(--tx);border-color:var(--mu)}
+.bcp.ok{color:var(--gn);border-color:var(--gn)}
+
+/* ══ MATCHES ══ */
+.mday{margin-bottom:28px}
+.mday-hd{font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:2px;color:var(--gold);margin-bottom:12px;padding:8px 12px;background:rgba(245,166,35,.07);border-radius:8px;border-left:3px solid var(--gold);display:flex;align-items:center;gap:8px}
+.mcomp{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;color:var(--mu);text-transform:uppercase;margin:12px 0 7px;padding-left:6px;border-left:2px solid var(--red)}
+
+.mc{background:var(--cd);border:1px solid var(--br);border-radius:10px;padding:12px 14px;margin-bottom:6px;transition:border-color .2s}
+.mc:hover{border-color:rgba(245,166,35,.2)}
+.mc-top{display:flex;align-items:center;gap:10px}
+.tb{display:flex;align-items:center;gap:7px;flex:1;min-width:0}
+.tb.r{flex-direction:row-reverse;text-align:right}
+.tl{width:30px;height:30px;object-fit:contain;flex-shrink:0}
+.tn{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600;letter-spacing:.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mt{flex-shrink:0;text-align:center;min-width:54px}
+.mh{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:var(--red);line-height:1}
+.mv{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:2px;color:var(--mu)}
+
+/* CHANNEL LINKS IN MATCH */
+.mc-chs{margin-top:10px;display:flex;flex-wrap:wrap;gap:5px;padding-top:8px;border-top:1px solid var(--br)}
+.mc-ch-btn{display:inline-flex;align-items:center;gap:4px;border:none;border-radius:6px;padding:5px 10px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.5px;cursor:pointer;transition:all .2s;white-space:nowrap}
+.mc-ch-ace{background:rgba(232,25,44,.18);color:var(--red);border:1px solid rgba(232,25,44,.35)}
+.mc-ch-ace:hover{background:rgba(232,25,44,.32);transform:scale(1.03)}
+.mc-ch-copy{background:rgba(74,158,255,.12);color:var(--bl);border:1px solid rgba(74,158,255,.3)}
+.mc-ch-copy:hover{background:rgba(74,158,255,.22)}
+.mc-ch-copy.ok{color:var(--gn);border-color:var(--gn);background:rgba(0,200,150,.1)}
+.mc-ch-other{background:rgba(255,255,255,.05);color:var(--mu);border:1px solid var(--br);cursor:default}
+
+/* UPDATE indicator */
+.upd-bar{background:var(--dk3);border-bottom:1px solid var(--br);padding:5px 16px;font-family:'Barlow Condensed',sans-serif;font-size:11px;color:var(--mu);display:flex;align-items:center;gap:8px;letter-spacing:.5px}
+.upd-dot{width:5px;height:5px;background:var(--gn);border-radius:50%;animation:p 2s infinite}
+#updTime{color:var(--gn)}
+
+/* EMPTY */
+.empty{text-align:center;padding:50px 20px;color:var(--mu)}
+.empty-i{font-size:44px;margin-bottom:10px}
+.empty-t{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;margin-bottom:6px;color:var(--tx)}
+
+/* FOOTER */
+footer{padding:18px 16px;text-align:center;border-top:1px solid var(--br);color:var(--mu);font-size:11px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;line-height:1.8}
+footer span{color:var(--red)}
+
+/* MODAL */
+.mov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:600;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(6px)}
+.mov.open{display:flex}
+.mo{background:var(--dk2);border:1px solid var(--br);border-top:2px solid var(--red);border-radius:12px;padding:22px;max-width:440px;width:100%;animation:mi .2s ease;position:relative}
+@keyframes mi{from{transform:scale(.94);opacity:0}to{transform:scale(1);opacity:1}}
+.mo-t{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;margin-bottom:14px;padding-right:26px;line-height:1.2}
+.mo-l{background:var(--dk3);border:1px solid var(--br);border-radius:7px;padding:11px 13px;font-size:11px;color:var(--mu);font-family:monospace;word-break:break-all;margin-bottom:14px;user-select:all;cursor:text}
+.mo-bs{display:flex;gap:7px;flex-wrap:wrap}
+.mb{flex:1;min-width:100px;padding:10px 14px;border-radius:7px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;cursor:pointer;text-decoration:none;text-align:center;border:none;display:block;transition:all .2s}
+.mbp{background:var(--red);color:#fff}
+.mbp:hover{background:var(--rdk)}
+.mbs{background:var(--dk3);color:var(--tx);border:1px solid var(--br)}
+.mbs:hover{border-color:var(--mu)}
+.mo-x{position:absolute;top:11px;right:13px;background:none;border:none;color:var(--mu);font-size:19px;cursor:pointer;padding:3px;line-height:1}
+.mo-x:hover{color:var(--tx)}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(18px);background:var(--dk3);border:1px solid var(--br);border-left:3px solid var(--gn);border-radius:8px;padding:9px 18px;font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:1px;color:var(--gn);opacity:0;transition:all .28s;z-index:9999;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* LOADING */
+.loading{text-align:center;padding:40px 20px;color:var(--mu);font-family:'Barlow Condensed',sans-serif;font-size:14px;letter-spacing:1px}
+.spin{display:inline-block;width:28px;height:28px;border:3px solid var(--br);border-top-color:var(--red);border-radius:50%;animation:spin .7s linear infinite;margin-bottom:10px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:580px){
+  .cg{grid-template-columns:1fr}
+  .main{padding:10px 10px 30px}
+  .mc-ch-btn{font-size:10px;padding:4px 8px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-ico">📺</div>
+    <div class="logo-tx">SOCRAM <span>TV</span></div>
+  </div>
+  <div class="live-b"><div class="dot"></div>EN VIVO</div>
+</header>
+
+<!-- ACESTREAM DOWNLOAD -->
+<div class="dl-bar">
+  <div class="dl-txt">📲 Descarga <strong>Acestream MOD</strong> para reproducir</div>
+  <div class="dl-btns">
+    <a class="btn-dl" href="https://www.mediafire.com/file/v5bn2mkcnjwvv2l/Ace_Stream_%2540McKlaus_Appss_Dark_MOD_Arm8.apk/file" target="_blank">📱 ARM8 Móvil</a>
+    <a class="btn-dl" href="https://www.mediafire.com/file/kjpzir3omat2g85/Ace_Stream_%2540McKlaus_Appss_Dark_MOD_Arm7.apk/file" target="_blank">📺 ARM7 TV</a>
+  </div>
+</div>
+
+<!-- INSTALL BANNER -->
+<div id="ib">
+  <div class="ib-t">🏠 Instala <strong>SOCRAM TV</strong> como app</div>
+  <div class="ib-bt">
+    <button id="btnInst">⬇ INSTALAR</button>
+    <button id="btnDis">✕</button>
+  </div>
+</div>
+
+<!-- UPDATE BAR -->
+<div class="upd-bar">
+  <div class="upd-dot"></div>
+  <span>Partidos: <span id="updTime">cargando...</span></span>
+  <button onclick="refreshMatches()" style="margin-left:auto;background:none;border:1px solid var(--br);border-radius:4px;padding:2px 8px;color:var(--mu);font-family:'Barlow Condensed',sans-serif;font-size:11px;cursor:pointer;transition:all .2s" onmouseover="this.style.color='var(--tx)'" onmouseout="this.style.color='var(--mu)'">↻ Actualizar</button>
+</div>
+
+<div class="sbar" id="sbar"></div>
+<div class="sw"><div class="sb"><span class="si2">🔍</span><input class="sinp" type="search" id="srch" placeholder="Buscar canal, liga, deporte..." autocomplete="off"></div></div>
+<div class="tw" id="tw"></div>
+<div class="main" id="main"></div>
+
+<footer>
+  SOCRAM TV &nbsp;·&nbsp; Acestream Links &nbsp;·&nbsp; <span>by Socram MASP</span><br>
+  Partidos: futbolhoy.es &nbsp;·&nbsp; Acestream MOD: McKlaus Appss
+</footer>
+
+<!-- MODAL -->
+<div class="mov" id="mov">
+  <div class="mo">
+    <button class="mo-x" onclick="closeMo()">✕</button>
+    <div class="mo-t" id="moT"></div>
+    <div class="mo-l" id="moL"></div>
+    <div class="mo-bs">
+      <a class="mb mbp" id="moA" href="#" target="_blank">▶ ABRIR EN ACESTREAM</a>
+      <button class="mb mbs" id="moC" onclick="copyMo()">📋 COPIAR</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+// ══════════════════════════════════════════════════════════
+// CANAL DATABASE
+// ══════════════════════════════════════════════════════════
+const CH=[
+  // LA LIGA
+  {n:"DAZN LA LIGA 1",g:"LA LIGA",lo:"https://raw.githubusercontent.com/tv-logo/tv-logos/refs/heads/main/countries/spain/dazn-laliga-es.png",id:"19f28f60c908f987b1a03da078e63320d7bf29e8",s:"NEW ERA",q:"",ic:"⚽"},
+  {n:"DAZN LA LIGA 1 FHD",g:"LA LIGA",lo:"https://raw.githubusercontent.com/tv-logo/tv-logos/refs/heads/main/countries/spain/dazn-laliga-es.png",id:"d1596a3988b84a4d2711fd380eb8a53256ad74ae",s:"NEW ERA",q:"FHD",ic:"⚽"},
+  {n:"DAZN LA LIGA 1 FHD",g:"LA LIGA",lo:"https://raw.githubusercontent.com/tv-logo/tv-logos/refs/heads/main/countries/spain/dazn-laliga-es.png",id:"71cb5e2567a8b39f5bdc4fa791992781b052f0bc",s:"NEW ERA VI",q:"FHD",ic:"⚽"},
+  {n:"DAZN LA LIGA 1",g:"LA LIGA",lo:"https://raw.githubusercontent.com/tv-logo/tv-logos/refs/heads/main/countries/spain/dazn-laliga-es.png",id:"cc108ae39f92c48f6c946763047bd1c9b7b7d889",s:"ELCANO",q:"",ic:"⚽"},
+  {n:"DAZN LA LIGA 1",g:"LA LIGA",lo:"https://raw.githubusercontent.com/tv-logo/tv-logos/refs/heads/main/countries/spain/dazn-laliga-es.png",id:"dda5d2cace9bc4cb0918e62bc50d657d4a10496a",s:"SPORT TV",q:"",ic:"⚽"},
+  {n:"M+ LALIGA FHD",g:"LA LIGA",lo:"https://i.ibb.co/yfV1Q8n/liga.png",id:"af458073c3096293a4dea9f369d4f308e7125bd6",s:"NEW ERA",q:"FHD",ic:"⚽"},
+  {n:"M+ LALIGA FHD",g:"LA LIGA",lo:"https://i.ibb.co/yfV1Q8n/liga.png",id:"b3bdd6ef7f795c4f321a3ce5cf4907338f462929",s:"NEW ERA II",q:"FHD",ic:"⚽"},
+  {n:"M+ LALIGA FHD",g:"LA LIGA",lo:"https://i.ibb.co/yfV1Q8n/liga.png",id:"f863873de9f7b2996dde19a0657dd89835af3007",s:"NEW ERA VI",q:"FHD",ic:"⚽"},
+  {n:"M+ LALIGA",g:"LA LIGA",lo:"https://i.ibb.co/yfV1Q8n/liga.png",id:"3ace1463a7cad979c3a4002b245487e9982e9f1a",s:"ELCANO",q:"",ic:"⚽"},
+  {n:"M+ LALIGA",g:"LA LIGA",lo:"https://i.ibb.co/yfV1Q8n/liga.png",id:"31c19ffb3472c289c5bbbbc174449c8ed0d19e38",s:"SPORT TV",q:"",ic:"⚽"},
+  {n:"M+ LALIGA 2 FHD",g:"LA LIGA",lo:"https://i.ibb.co/Tc97zSb/liga2.png",id:"caa631e8850e3eb5e7c039063dd8a339ccef1176",s:"NEW ERA",q:"FHD",ic:"⚽"},
+  {n:"M+ LALIGA 2",g:"LA LIGA",lo:"https://i.ibb.co/Tc97zSb/liga2.png",id:"b8eb9c9868d487402569bba2d97a8af113d033fe",s:"SPORT TV",q:"",ic:"⚽"},
+  {n:"M+ LALIGA 3 FHD",g:"LA LIGA",lo:"https://i.ibb.co/BZF0xG9/liga3.png",id:"c9afaf4965ad627ea6983fec9f63e0c1e857028d",s:"NEW ERA",q:"FHD",ic:"⚽"},
+  {n:"M+ LALIGA 3",g:"LA LIGA",lo:"https://i.ibb.co/BZF0xG9/liga3.png",id:"571ce113b9d600a145766443d7417eccab2e1846",s:"SPORT TV",q:"",ic:"⚽"},
+  {n:"M+ LALIGA 4",g:"LA LIGA",lo:"https://raw.githubusercontent.com/tv-logo/tv-logos/refs/heads/main/countries/spain/laliga-tv-4-por-movistar-plus-es.png",id:"22178d72e0f255dedd7e56f9474fea879289a6f1",s:"SPORT TV",q:"",ic:"⚽"},
+  // LIGA DE CAMPEONES
+  {n:"LIGA CAMPEONES FHD",g:"LIGA DE CAMPEONES",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/M%2B%20Liga%20de%20Campeones.png",id:"c16b4fab1f724c94cad92081cbb7fc7c6fe8a2cc",s:"NEW ERA",q:"FHD",ic:"⭐"},
+  {n:"LIGA CAMPEONES FHD",g:"LIGA DE CAMPEONES",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/M%2B%20Liga%20de%20Campeones.png",id:"778f08cbae9596ed9e8b2ae0af33ee7a6fe24c6a",s:"NEW ERA",q:"FHD",ic:"⭐"},
+  {n:"LIGA CAMPEONES FHD",g:"LIGA DE CAMPEONES",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/M%2B%20Liga%20de%20Campeones.png",id:"afbf2a479c5a5072698139f0f556ef3e77a99bd0",s:"NEW ERA",q:"FHD",ic:"⭐"},
+  {n:"LIGA CAMPEONES FHD",g:"LIGA DE CAMPEONES",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/M%2B%20Liga%20de%20Campeones.png",id:"afbf1ef8812e7b0a0977fa3a0a2d3a6d3cbd6c6f",s:"NEW ERA II",q:"FHD",ic:"⭐"},
+  {n:"LIGA CAMPEONES",g:"LIGA DE CAMPEONES",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/M%2B%20Liga%20de%20Campeones.png",id:"e572a5178ff72eed7d1d751a18b4b3419699f370",s:"SPORT TV",q:"",ic:"⭐"},
+  {n:"LIGA CAMPEONES 2 FHD",g:"LIGA DE CAMPEONES",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/M%2B%20Liga%20de%20Campeones%202.png",id:"c6a3673f6a37b1bd3cf31fdd6404dd33d48cfccb",s:"NEW ERA",q:"FHD",ic:"⭐"},
+  {n:"LIGA CAMPEONES 2 FHD",g:"LIGA DE CAMPEONES",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/M%2B%20Liga%20de%20Campeones%202.png",id:"4fc6d0331830ad8743abab2fe2473b63bdfbc49f",s:"NEW ERA",q:"FHD",ic:"⭐"},
+  {n:"LIGA CAMPEONES 3 FHD",g:"LIGA DE CAMPEONES",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/M%2B%20Liga%20de%20Campeones%203.png",id:"07976f79d17a439d7aff46cf0d4cfdf80311caf5",s:"NEW ERA",q:"FHD",ic:"⭐"},
+  {n:"LIGA CAMPEONES 3 FHD",g:"LIGA DE CAMPEONES",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/M%2B%20Liga%20de%20Campeones%203.png",id:"66b373c0da20ac615996dbd1c340087f50a9a39e",s:"NEW ERA",q:"FHD",ic:"⭐"},
+  {n:"LIGA CAMPEONES 4 FHD",g:"LIGA DE CAMPEONES",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/M%2B%20Liga%20de%20Campeones%204.png",id:"77998f8161373611ff6b348e7eda5b4e97d3ec29",s:"NEW ERA",q:"FHD",ic:"⭐"},
+  {n:"LIGA CAMPEONES 5 FHD",g:"LIGA DE CAMPEONES",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/M%2B%20Liga%20de%20Campeones%205.png",id:"cb6410a6355a645cfc6f6f5a7c7d71298fcbc2c5",s:"NEW ERA",q:"FHD",ic:"⭐"},
+  {n:"LIGA CAMPEONES 6 FHD",g:"LIGA DE CAMPEONES",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/M%2B%20Liga%20de%20Campeones%206.png",id:"976983697790ab8a07b764b08843529d38bc6444",s:"NEW ERA",q:"FHD",ic:"⭐"},
+  // MOVISTAR DEPORTES
+  {n:"MOVISTAR DEPORTES FHD",g:"MOVISTAR DEPORTES",lo:"https://i.ibb.co/CV4CLjz/deportes.png",id:"332d8fdeb9c51385230b8c9448e047ccc4a6355d",s:"NEW ERA",q:"FHD",ic:"📺"},
+  {n:"MOVISTAR DEPORTES FHD",g:"MOVISTAR DEPORTES",lo:"https://i.ibb.co/CV4CLjz/deportes.png",id:"f828a32d8ea03a3cabd3ce3ebecb249ec111c7e5",s:"NEW ERA",q:"FHD",ic:"📺"},
+  {n:"MOVISTAR DEPORTES",g:"MOVISTAR DEPORTES",lo:"https://i.ibb.co/CV4CLjz/deportes.png",id:"af393f93814d03160d48d2730759593b7bea5b47",s:"NEW ERA III",q:"",ic:"📺"},
+  {n:"MOVISTAR DEPORTES",g:"MOVISTAR DEPORTES",lo:"https://i.ibb.co/CV4CLjz/deportes.png",id:"6e031aed136bf97d8667fcd5fc49c73256928281",s:"ELCANO",q:"",ic:"📺"},
+  {n:"MOVISTAR DEPORTES 2 HD",g:"MOVISTAR DEPORTES",lo:"https://i.ibb.co/q95fBKV/deportes2.png",id:"3afe1af18f8ff78e9946856911b00c67477052b5",s:"SPORT TV",q:"HD",ic:"📺"},
+  {n:"MOVISTAR DEPORTES 3",g:"MOVISTAR DEPORTES",lo:"https://i.ibb.co/jDg5qWD/deportes3.png",id:"e9ce6e62ff97f1da7f10fd449a3c8e8ee90b253d",s:"ELCANO",q:"",ic:"📺"},
+  {n:"MOVISTAR DEPORTES 3 HD",g:"MOVISTAR DEPORTES",lo:"https://i.ibb.co/jDg5qWD/deportes3.png",id:"39fefdecfc953dcf6e7c589739bf486c2e605ed0",s:"SPORT TV",q:"HD",ic:"📺"},
+  {n:"MOVISTAR DEPORTES 4 FHD",g:"MOVISTAR DEPORTES",lo:"https://i.ibb.co/WDN9NN9/deportes4.png",id:"58a4c880ab18486d914751db32a12760e74b75a4",s:"NEW ERA",q:"FHD",ic:"📺"},
+  {n:"MOVISTAR DEPORTES 5 HD",g:"MOVISTAR DEPORTES",lo:"https://raw.githubusercontent.com/tv-logo/tv-logos/refs/heads/main/countries/spain/deportes-5-por-movistar-plus-es.png",id:"3230cdca852a10325222e3c546e499e31d547a90",s:"SPORT TV",q:"HD",ic:"📺"},
+  {n:"MOVISTAR DEPORTES 6 FHD",g:"MOVISTAR DEPORTES",lo:"https://raw.githubusercontent.com/tv-logo/tv-logos/refs/heads/main/countries/spain/deportes-6-por-movistar-plus-es.png",id:"e4124b2143ed75e5ce902bed61be08cc5e5c3c03",s:"NEW ERA",q:"FHD",ic:"📺"},
+  {n:"MOVISTAR ELLAS FHD",g:"MOVISTAR DEPORTES",lo:"https://i.ibb.co/rx9hnHz/ellas.png",id:"9b84af74b2fa3690c519199326fc2f181b025cdd",s:"NEW ERA",q:"FHD",ic:"📺"},
+  {n:"MOVISTAR GOLF FHD",g:"MOVISTAR DEPORTES",lo:"https://i.ibb.co/Vp04N3pT/golf.png",id:"8546cff89e4ee8bf3ad31cf6457c3bc2c4341031",s:"NEW ERA",q:"FHD",ic:"⛳"},
+  {n:"MOVISTAR GOLF HD",g:"MOVISTAR DEPORTES",lo:"https://i.ibb.co/Vp04N3pT/golf.png",id:"872608e734992db636eb79426802cd08f4029afb",s:"SPORT TV",q:"HD",ic:"⛳"},
+  {n:"MOVISTAR VAMOS FHD",g:"MOVISTAR DEPORTES",lo:"https://i.ibb.co/gWMRpFB/vamos.png",id:"651d6be899d1fafa107a265a9dc00ff914c1b548",s:"NEW ERA",q:"FHD",ic:"📺"},
+  {n:"MOVISTAR VAMOS HD",g:"MOVISTAR DEPORTES",lo:"https://i.ibb.co/gWMRpFB/vamos.png",id:"8e1e515d21634315f1ef72f8ae21e76e4cf886b1",s:"NEW ERA III",q:"HD",ic:"📺"},
+  {n:"MOVISTAR VAMOS",g:"MOVISTAR DEPORTES",lo:"https://i.ibb.co/gWMRpFB/vamos.png",id:"866a8af8faacf8fc9eb997ab5a68b4dfee4edc77",s:"ELCANO",q:"",ic:"📺"},
+  {n:"MOVISTAR VAMOS",g:"MOVISTAR DEPORTES",lo:"https://i.ibb.co/gWMRpFB/vamos.png",id:"5e310dbffed8c941d20ad819cb8ef43c34b07884",s:"ELCANO",q:"",ic:"📺"},
+  // FORMULA 1
+  {n:"DAZN F1 4K",g:"FORMULA 1",lo:"https://i.ibb.co/2Ndmtbp/f1.png",id:"c8ad94585fbe13cfc9074c2b5e23fb6344e0f66d",s:"NEW ERA",q:"4K",ic:"🏎️"},
+  {n:"DAZN F1 FHD",g:"FORMULA 1",lo:"https://i.ibb.co/2Ndmtbp/f1.png",id:"6422e8bc34282871634c81947be093c04ad1bb29",s:"NEW ERA",q:"FHD",ic:"🏎️"},
+  {n:"DAZN F1 FHD",g:"FORMULA 1",lo:"https://i.ibb.co/2Ndmtbp/f1.png",id:"c9c18ae7a9dafba1caae5beb22060f9c92bba553",s:"NEW ERA",q:"FHD",ic:"🏎️"},
+  {n:"DAZN F1 FHD",g:"FORMULA 1",lo:"https://i.ibb.co/2Ndmtbp/f1.png",id:"b5f3cc5cd66c98bae9d65df43ecee6c02d18aebd",s:"NEW ERA II",q:"FHD",ic:"🏎️"},
+  {n:"DAZN F1 FHD",g:"FORMULA 1",lo:"https://i.ibb.co/2Ndmtbp/f1.png",id:"724f9b252b11064e3f16220717fd52bd3a510b5f",s:"NEW ERA VI",q:"FHD",ic:"🏎️"},
+  {n:"DAZN F1 HD",g:"FORMULA 1",lo:"https://i.ibb.co/2Ndmtbp/f1.png",id:"6d325cda6ed591647ef5e91edd043147bce8be30",s:"NEW LOOP",q:"HD",ic:"🏎️"},
+  {n:"DAZN F1",g:"FORMULA 1",lo:"https://i.ibb.co/2Ndmtbp/f1.png",id:"b04372b9543d763bd2dbd2a1842d9723fd080076",s:"SPORT TV",q:"",ic:"🏎️"},
+  // DAZN
+  {n:"DAZN 1",g:"DAZN",lo:"https://i.ibb.co/FVzKq1y/dazn1.png",id:"d5b2c6b940cf3df5e8f9dc6f000f0ea23a10b151",s:"SPORT TV",q:"",ic:"🎯"},
+  {n:"DAZN 2",g:"DAZN",lo:"https://i.ibb.co/Kz0GXSX/dazn2.png",id:"8b081c8afbd9beafc8c5fbf0115eb36eadb07a35",s:"NEW ERA",q:"FHD",ic:"🎯"},
+  {n:"DAZN 2",g:"DAZN",lo:"https://i.ibb.co/Kz0GXSX/dazn2.png",id:"fb2dd566824658eeab27aae19a01c09430f1a97d",s:"NEW ERA",q:"FHD",ic:"🎯"},
+  {n:"DAZN 2",g:"DAZN",lo:"https://i.ibb.co/Kz0GXSX/dazn2.png",id:"b0eabe0fdd02fdd165896236765a9b753a2ff516",s:"SPORT TV",q:"",ic:"🎯"},
+  {n:"DAZN 3",g:"DAZN",lo:"https://i.ibb.co/2vkThM3/dazn3.png",id:"d641cd0fca0f467b3130754a091e2f4d22e68eb1",s:"NEW ERA",q:"FHD",ic:"🎯"},
+  {n:"DAZN 3",g:"DAZN",lo:"https://i.ibb.co/2vkThM3/dazn3.png",id:"8a86cd6152154a25ad4b76523160552a40313b28",s:"NEW ERA",q:"FHD",ic:"🎯"},
+  {n:"DAZN 3",g:"DAZN",lo:"https://i.ibb.co/2vkThM3/dazn3.png",id:"d1d9ec2361a6ac8edc0b2841866383768cc28df9",s:"SPORT TV",q:"",ic:"🎯"},
+  {n:"DAZN 4",g:"DAZN",lo:"https://i.ibb.co/R4LBVWP/dazn4.png",id:"7e27e46c25d4308d16098d9dc67fcd8736e8c1f0",s:"NEW ERA",q:"FHD",ic:"🎯"},
+  {n:"DAZN 4",g:"DAZN",lo:"https://i.ibb.co/R4LBVWP/dazn4.png",id:"c015d37d1ead8155b1e7b97e743a1fe9850f0af5",s:"NEW ERA",q:"FHD",ic:"🎯"},
+  {n:"DAZN 4",g:"DAZN",lo:"https://i.ibb.co/R4LBVWP/dazn4.png",id:"7e90956539f4e1318a63f3960e4f75c7c7c5a3b8",s:"SPORT TV",q:"",ic:"🎯"},
+  // EUROSPORT
+  {n:"EUROSPORT 1",g:"EUROSPORT",lo:"https://i.ibb.co/r2Yd7xD/euro1.png",id:"48a589dbeab3544662fafd79888aada7d834cfe9",s:"ELCANO",q:"",ic:"🌍"},
+  {n:"EUROSPORT 1 HD",g:"EUROSPORT",lo:"https://i.ibb.co/r2Yd7xD/euro1.png",id:"547ab7146a86d6119c9332c011669544720124e3",s:"NEW LOOP",q:"HD",ic:"🌍"},
+  {n:"EUROSPORT 1 HD",g:"EUROSPORT",lo:"https://i.ibb.co/r2Yd7xD/euro1.png",id:"e541a954465df29ccce4d829529d983ffb2803d4",s:"NEW LOOP",q:"HD",ic:"🌍"},
+  {n:"EUROSPORT 2",g:"EUROSPORT",lo:"https://i.ibb.co/M6h4Qyd/euro2.png",id:"dc4ccb9e72550bc72be9360aa7d77e337ad11ecc",s:"NEW ERA",q:"FHD",ic:"🌍"},
+  {n:"EUROSPORT 2 HD",g:"EUROSPORT",lo:"https://i.ibb.co/M6h4Qyd/euro2.png",id:"6176281b9c46a5621a0e88524f8dc621f173b8e0",s:"SPORT TV",q:"HD",ic:"🌍"},
+  // FUTBOL INT
+  {n:"BEIN SPORTS 1",g:"FUTBOL INT",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/beIN%20SPORTS%201.png",id:"bba1905fcd1c4975aec544047bf8e4cd23ce3fe0",s:"SPORT TV",q:"",ic:"⚽"},
+  {n:"BEIN SPORTS HD 1",g:"FUTBOL INT",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/beIN%20SPORTS%201.png",id:"118416583faa3fb4f03800173429b6b844b43a52",s:"SPORT TV",q:"HD",ic:"⚽"},
+  {n:"BEIN SPORTS 2",g:"FUTBOL INT",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/beIN%20SPORTS%202.png",id:"edb507e38394d614c9ff55805c9d354ae13210bc",s:"SPORT TV",q:"",ic:"⚽"},
+  {n:"BEIN SPORTS 3",g:"FUTBOL INT",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/beIN%20SPORTS%203.png",id:"731bd3336ec0986ff9100efe40dbaf1473a22cf8",s:"SPORT TV",q:"",ic:"⚽"},
+  {n:"BT SPORT 1 (UK)",g:"FUTBOL INT",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/TNT%20Sports%201.png",id:"fc5089d8e1519872fdf951779ccbca913acc9bce",s:"SPORT TV",q:"",ic:"⚽"},
+  {n:"BT SPORT 2 (UK)",g:"FUTBOL INT",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/TNT%20Sports%202.png",id:"d63d8a57cf471394bfa9f619bbd68b01ae27a801",s:"SPORT TV",q:"",ic:"⚽"},
+  {n:"ELEVEN DAZN 1",g:"FUTBOL INT",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/DAZN%201.png",id:"7ac2d74ef6df9d15012992d7e0e635a95f58c652",s:"SPORT TV",q:"",ic:"⚽"},
+  {n:"ELEVEN DAZN 1 HD",g:"FUTBOL INT",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/DAZN%201.png",id:"14407b00d454cb7dc0d70aa26e8bbc554f457f00",s:"SPORT TV",q:"HD",ic:"⚽"},
+  {n:"ELEVEN DAZN 2",g:"FUTBOL INT",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/DAZN%202.png",id:"d08013df6e437a1fdf1e0c34f573fdf6a40c7fce",s:"SPORT TV",q:"",ic:"⚽"},
+  {n:"ELEVEN DAZN 2 HD",g:"FUTBOL INT",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/DAZN%202.png",id:"54a4a28882d3cae1ca19de5d4b022ebea40351f9",s:"SPORT TV",q:"HD",ic:"⚽"},
+  {n:"ESPN (US) HD",g:"FUTBOL INT",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/ESPN.png",id:"4b4907de51ec11087d4bed5876f2a0c68264f442",s:"SPORT TV",q:"HD",ic:"⚽"},
+  {n:"ESPN ARGENTINA",g:"FUTBOL INT",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/ESPN.png",id:"4bf4431b4815f07c1b3749f5a10f905ba566cd47",s:"NEW ERA",q:"",ic:"⚽"},
+  {n:"PREMIER SPORTS 1",g:"FUTBOL INT",lo:"https://i.ibb.co/10xGrD4/Premier1.png",id:"75a56863b6fe0407ad4305b4d7ee5643c3923565",s:"SPORT TV",q:"",ic:"⚽"},
+  {n:"PREMIER SPORTS 2",g:"FUTBOL INT",lo:"https://i.ibb.co/10xGrD4/Premier2.png",id:"4903ca695edb64bc72ae29eb85a5333ba0139537",s:"SPORT TV",q:"",ic:"⚽"},
+  {n:"SKY SPORTS FOOTBALL",g:"FUTBOL INT",lo:"https://tvprofil.com/img/kanali-logo/Sky_Sports_Football_GB_logo.png?1734015024",id:"8dbe2d515e9131fa311353537736f8c94be9b26d",s:"SPORT TV",q:"",ic:"⚽"},
+  // HYPERMOTION
+  {n:"HYPERMOTION FHD",g:"HYPERMOTION",lo:"https://i.ibb.co/CBdGc9f/hypermotion1.png",id:"58b1c4b8cb65d648505b035a04e879672fcd8e3f",s:"NEW ERA",q:"FHD",ic:"⚡"},
+  {n:"HYPERMOTION FHD",g:"HYPERMOTION",lo:"https://i.ibb.co/CBdGc9f/hypermotion1.png",id:"fc129b39c253b887563c3f0dce5fca7e699c3047",s:"NEW ERA VI",q:"FHD",ic:"⚡"},
+  {n:"HYPERMOTION",g:"HYPERMOTION",lo:"https://i.ibb.co/CBdGc9f/hypermotion1.png",id:"1f75d92098580443857caa95a719103cb83781b0",s:"ELCANO",q:"",ic:"⚡"},
+  {n:"HYPERMOTION 2",g:"HYPERMOTION",lo:"https://i.ibb.co/8K0VrQV/hypermotion2.png",id:"3a21e651c0bffe810cfc8537065cb81f5ed68a55",s:"ELCANO",q:"",ic:"⚡"},
+  // COPA DEL REY
+  {n:"COPA DEL REY",g:"COPA DEL REY",lo:"https://i.ibb.co/m54QH9Gt/copa.png",id:"4b9f813f30b4345fe555f9e218d828d76cd6ee88",s:"NEW ERA",q:"",ic:"🏆"},
+  {n:"COPA DEL REY",g:"COPA DEL REY",lo:"https://i.ibb.co/m54QH9Gt/copa.png",id:"63ad519ec9602ea12f7867cf15914b2537bbf04a",s:"NEW ERA",q:"",ic:"🏆"},
+  // MOTOR
+  {n:"DAZN MOTOGP",g:"MOTOR",lo:"https://i.ibb.co/2Ndmtbp/f1.png",id:"11cbb5346d28af0b972e646832f4be23dd39502d",s:"NEW ERA",q:"",ic:"🏍️"},
+  {n:"DAZN MOTOGP FHD",g:"MOTOR",lo:"https://i.ibb.co/2Ndmtbp/f1.png",id:"18b03739d660f0066364343e226e437bf2555d56",s:"NEW ERA VI",q:"FHD",ic:"🏍️"},
+  {n:"MOTORS TV HD",g:"MOTOR",lo:"https://www.mxgp.com/sites/default/files/news/image/logo%20Motors%20TV.jpg",id:"442aeb6643b8836f9d00361c9e48eeb0841ddf98",s:"NEW LOOP",q:"HD",ic:"🏍️"},
+  {n:"MOTORVISION",g:"MOTOR",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/Motorvision%20TV.png",id:"9c75e6ed0671eec6670cb2eabcc7d78267c7f404",s:"NEW LOOP",q:"",ic:"🏎️"},
+  // DEPORTES
+  {n:"FOX PREMIUM UFC",g:"DEPORTES",lo:"https://i.blogs.es/61a41c/fox-sports-premium-230322-1200x675-1/450_1000.jpg",id:"ade70f2c51cca519a4d8de1bb181af6e8532e1e1",s:"NEW ERA",q:"",ic:"🥊"},
+  {n:"GOL PLAY FHD",g:"DEPORTES",lo:"https://assets.laliga.com/assets/2023/07/13/medium/60e1502d7d6098162828bb002e98bdb4.png",id:"9fb99c40a2c45d5c5342b30626eb56140f980612",s:"NEW ERA",q:"FHD",ic:"⚽"},
+  {n:"GOL PLAY FHD",g:"DEPORTES",lo:"https://assets.laliga.com/assets/2023/07/13/medium/60e1502d7d6098162828bb002e98bdb4.png",id:"b2d560741c006fc5e4a42412bb52dbd25a6a4a3a",s:"NEW ERA",q:"FHD",ic:"⚽"},
+  {n:"SKY SPORTS ARENA",g:"DEPORTES",lo:"https://tvprofil.com/img/kanali-logo/Sky_Sports_Arena_GB_logo.png?1734015005",id:"d317a003e8047da2c36a2a2bb2289578c9a3b79c",s:"SPORT TV",q:"",ic:"🎽"},
+  {n:"SKY SPORTS MAIN EVENT",g:"DEPORTES",lo:"https://tvprofil.com/img/kanali-logo/Sky_Sports_Main_Event_GB_logo.png?1734014539",id:"eab7aeef0218ce8b0752e596e4792b69eda4df5e",s:"SPORT TV",q:"",ic:"🎽"},
+  // TENNIS
+  {n:"TENNIS CHANNEL FHD",g:"TENNIS",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/Tennis%20Channel.png",id:"71698ee415b6ba3f123aac1c8c37cc97376f20d0",s:"NEW ERA",q:"FHD",ic:"🎾"},
+  {n:"TENNIS CHANNEL",g:"TENNIS",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/Tennis%20Channel.png",id:"8091334c82e8720fc6aa05ff0bd6d343c5bfecbf",s:"NEW LOOP",q:"",ic:"🎾"},
+  // TDT
+  {n:"LA 1 FHD",g:"TDT",lo:"https://i.ibb.co/Vf2GT70/la1.png",id:"dad5e0e0825cb3e410008f1c4252387b868e740c",s:"NEW ERA",q:"FHD",ic:"📡"},
+  {n:"LA 2 FHD",g:"TDT",lo:"https://i.ibb.co/YFzzqWw5/la2.png",id:"9934906503661142f97a044ae1509a294057c2ed",s:"NEW ERA",q:"FHD",ic:"📡"},
+  {n:"LA SEXTA FHD",g:"TDT",lo:"https://i.ibb.co/SX1jhBzy/lasexta.png",id:"44828a7580cd99fcb36245c327889c47f34b457f",s:"NEW ERA",q:"FHD",ic:"📡"},
+  // 1RFEF
+  {n:"Canal 1 (1RFEF)",g:"1RFEF",lo:"https://static.wikia.nocookie.net/logopedia/images/d/df/Logo_Primera_RFEF_2021.png/revision/latest?cb=20230620215900&path-prefix=es",id:"c1ee6e1e0ef5928d8261f855c417de21794f437d",s:"NEW ERA",q:"",ic:"⚽"},
+  {n:"Canal 2 (1RFEF)",g:"1RFEF",lo:"https://static.wikia.nocookie.net/logopedia/images/d/df/Logo_Primera_RFEF_2021.png/revision/latest?cb=20230620215900&path-prefix=es",id:"8677d339ecddd75165c0015025f598b6215974cf",s:"NEW ERA",q:"",ic:"⚽"},
+  {n:"PRIMERA FEDERACIÓN FHD",g:"1RFEF",lo:"https://static.wikia.nocookie.net/logopedia/images/d/df/Logo_Primera_RFEF_2021.png/revision/latest?cb=20230620215900&path-prefix=es",id:"599a2fda91aa55703e2c5a51562d9dbf5d3d31d9",s:"NEW ERA",q:"FHD",ic:"⚽"},
+  // MOVISTAR
+  {n:"MOVISTAR PLUS FHD",g:"MOVISTAR",lo:"https://i.ibb.co/hFYPWbpJ/plus.png",id:"8c67cdb5ba81976662c3a67984a9545d9cfb0f70",s:"NEW ERA",q:"FHD",ic:"📱"},
+  {n:"MOVISTAR PLUS FHD",g:"MOVISTAR",lo:"https://i.ibb.co/hFYPWbpJ/plus.png",id:"b6ffbbc72a5b6b579faf79ebac229af7a25b933b",s:"NEW ERA",q:"FHD",ic:"📱"},
+  {n:"MOVISTAR PLUS FHD",g:"MOVISTAR",lo:"https://i.ibb.co/hFYPWbpJ/plus.png",id:"c1b7f54af0de256d1ac0fcac4c130e62660089f4",s:"NEW ERA VI",q:"FHD",ic:"📱"},
+  {n:"MOVISTAR PLUS FHD",g:"MOVISTAR",lo:"https://i.ibb.co/hFYPWbpJ/plus.png",id:"ed74406ccdb3c21941b919db6bffca7f1de015bb",s:"ELCANO",q:"FHD",ic:"📱"},
+];
+
+// ══════════════════════════════════════════════════════════
+// CHANNEL → ACESTREAM ID MAP  (para matchear canales TV con IDs)
+// ══════════════════════════════════════════════════════════
+const CH_MAP = {
+  // La Liga / DAZN LaLiga
+  "dazn laliga":    ["19f28f60c908f987b1a03da078e63320d7bf29e8","d1596a3988b84a4d2711fd380eb8a53256ad74ae","71cb5e2567a8b39f5bdc4fa791992781b052f0bc","dda5d2cace9bc4cb0918e62bc50d657d4a10496a"],
+  "m+ laliga":      ["af458073c3096293a4dea9f369d4f308e7125bd6","b3bdd6ef7f795c4f321a3ce5cf4907338f462929","f863873de9f7b2996dde19a0657dd89835af3007","3ace1463a7cad979c3a4002b245487e9982e9f1a"],
+  "laliga tv hypermotion":["58b1c4b8cb65d648505b035a04e879672fcd8e3f","fc129b39c253b887563c3f0dce5fca7e699c3047"],
+  "laliga tv hypermotion 2":["3a21e651c0bffe810cfc8537065cb81f5ed68a55","1f75d92098580443857caa95a719103cb83781b0"],
+  "hypermotion":    ["58b1c4b8cb65d648505b035a04e879672fcd8e3f","fc129b39c253b887563c3f0dce5fca7e699c3047"],
+  // Champions
+  "m+ liga de campeones":  ["c16b4fab1f724c94cad92081cbb7fc7c6fe8a2cc","afbf2a479c5a5072698139f0f556ef3e77a99bd0","778f08cbae9596ed9e8b2ae0af33ee7a6fe24c6a"],
+  "m+ liga de campeones 2":["c6a3673f6a37b1bd3cf31fdd6404dd33d48cfccb","4fc6d0331830ad8743abab2fe2473b63bdfbc49f"],
+  "m+ liga de campeones 3":["07976f79d17a439d7aff46cf0d4cfdf80311caf5","66b373c0da20ac615996dbd1c340087f50a9a39e"],
+  "m+ liga de campeones 4":["77998f8161373611ff6b348e7eda5b4e97d3ec29"],
+  "m+ liga de campeones 5":["cb6410a6355a645cfc6f6f5a7c7d71298fcbc2c5"],
+  "movistar plus+":  ["c16b4fab1f724c94cad92081cbb7fc7c6fe8a2cc","8c67cdb5ba81976662c3a67984a9545d9cfb0f70"],
+  // DAZN
+  "dazn":           ["d5b2c6b940cf3df5e8f9dc6f000f0ea23a10b151","8b081c8afbd9beafc8c5fbf0115eb36eadb07a35","fb2dd566824658eeab27aae19a01c09430f1a97d"],
+  "dazn 1":         ["d5b2c6b940cf3df5e8f9dc6f000f0ea23a10b151"],
+  "dazn 2":         ["8b081c8afbd9beafc8c5fbf0115eb36eadb07a35","fb2dd566824658eeab27aae19a01c09430f1a97d","b0eabe0fdd02fdd165896236765a9b753a2ff516"],
+  "dazn 3":         ["d641cd0fca0f467b3130754a091e2f4d22e68eb1","8a86cd6152154a25ad4b76523160552a40313b28","d1d9ec2361a6ac8edc0b2841866383768cc28df9"],
+  // Gol Play
+  "gol play":       ["9fb99c40a2c45d5c5342b30626eb56140f980612","b2d560741c006fc5e4a42412bb52dbd25a6a4a3a"],
+  // M+ Vamos
+  "m+ vamos":       ["651d6be899d1fafa107a265a9dc00ff914c1b548","8e1e515d21634315f1ef72f8ae21e76e4cf886b1"],
+  // Teledeporte / La 1 / La 2
+  "teledeporte":    ["dad5e0e0825cb3e410008f1c4252387b868e740c"],
+  "la 1":           ["dad5e0e0825cb3e410008f1c4252387b868e740c"],
+  "la 2":           ["9934906503661142f97a044ae1509a294057c2ed"],
+  // Primera Fed
+  "primera federación": ["c1ee6e1e0ef5928d8261f855c417de21794f437d","8677d339ecddd75165c0015025f598b6215974cf","599a2fda91aa55703e2c5a51562d9dbf5d3d31d9"],
+  "1rfef":          ["c1ee6e1e0ef5928d8261f855c417de21794f437d","8677d339ecddd75165c0015025f598b6215974cf"],
+};
+
+// Resolve TV channel name → acestream IDs
+function resolveIds(chName){
+  const k = chName.toLowerCase().trim();
+  // exact match
+  if(CH_MAP[k]) return CH_MAP[k];
+  // partial match
+  for(const [key,ids] of Object.entries(CH_MAP)){
+    if(k.includes(key)||key.includes(k)) return ids;
+  }
+  return [];
+}
+
+// ══════════════════════════════════════════════════════════
+// MATCHES — auto-updated via AI API
+// ══════════════════════════════════════════════════════════
+const STORAGE_KEY = 'socram_matches_v2';
+const STORAGE_DATE = 'socram_matches_date';
+let matchesData = null;
+
+// Get today's date string
+function todayStr(){
+  return new Date().toISOString().slice(0,10);
+}
+
+// Load matches from localStorage cache or fetch fresh
+async function loadMatches(){
+  const cached = localStorage.getItem(STORAGE_KEY);
+  const cachedDate = localStorage.getItem(STORAGE_DATE);
+  const today = todayStr();
+  if(cached && cachedDate === today){
+    try{
+      matchesData = JSON.parse(cached);
+      document.getElementById('updTime').textContent = 'Hoy (caché)';
+      return matchesData;
+    }catch(e){}
+  }
+  return await refreshMatches();
+}
+
+async function refreshMatches(){
+  document.getElementById('updTime').textContent = 'actualizando...';
+  if(currentGroup==='PARTIDOS') renderLoading();
+  try{
+    const result = await fetchMatchesFromAI();
+    if(result && result.length > 0){
+      matchesData = result;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(matchesData));
+      localStorage.setItem(STORAGE_DATE, todayStr());
+      document.getElementById('updTime').textContent = new Date().toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'});
+      buildStats();
+      if(currentGroup==='PARTIDOS') renderMatches();
+      return matchesData;
+    }
+  }catch(e){
+    console.warn('Error cargando partidos:', e);
+  }
+  // Fallback a datos estáticos
+  matchesData = FALLBACK_MATCHES;
+  document.getElementById('updTime').textContent = 'datos fijos';
+  buildStats();
+  if(currentGroup==='PARTIDOS') renderMatches();
+  return matchesData;
+}
+
+async function fetchMatchesFromAI(){
+  const today = new Date().toLocaleDateString('es-ES',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const response = await fetch("https://api.anthropic.com/v1/messages",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({
+      model:"claude-sonnet-4-20250514",
+      max_tokens:1000,
+      system:`Eres un asistente que devuelve SOLO JSON válido, sin texto extra, sin markdown, sin \`\`\`.`,
+      messages:[{
+        role:"user",
+        content:`Hoy es ${today}. Devuelve los partidos de fútbol de hoy en TV en España en este formato JSON exacto:
+[{"comp":"nombre competición","matches":[{"h":"equipo local","a":"equipo visitante","time":"HH:MM","hL":"url escudo local sportstv-img.b-cdn.net","aL":"url escudo visitante","chs":["canal1","canal2"]}]}]
+
+Competiciones: Liga EA Sports, Liga Hypermotion, Champions League, Europa League, Conference League, Premier League, Serie A, Bundesliga, Primera Federación.
+Canales posibles: DAZN LaLiga, M+ LaLiga, DAZN, DAZN 1, DAZN 2, DAZN 3, M+ Liga de Campeones, M+ Liga de Campeones 2, M+ Liga de Campeones 3, M+ Vamos, Movistar Plus+, Gol Play, Teledeporte, La 1, La 2, LaLiga TV Hypermotion, LaLiga TV Hypermotion 2, Primera Federación.
+Solo devuelve el JSON array, nada más.`
+      }]
+    })
+  });
+  if(!response.ok) throw new Error('API error '+response.status);
+  const data = await response.json();
+  const text = data.content.map(b=>b.text||'').join('').trim();
+  const clean = text.replace(/```json|```/g,'').trim();
+  return JSON.parse(clean);
+}
+
+// ── FALLBACK DATA (today Apr 12 2026) ──
+const FALLBACK_MATCHES = [
+  {comp:"Liga EA Sports 🇪🇸", matches:[
+    {h:"Osasuna",a:"Betis",time:"14:00",hL:"https://sportstv-img.b-cdn.net/pics/mini/teams/6_20130125.webp",aL:"https://sportstv-img.b-cdn.net/pics/mini/teams/15_20130125.webp",chs:["DAZN LaLiga","DAZN"]},
+    {h:"Mallorca",a:"Rayo Vallecano",time:"16:15",hL:"https://sportstv-img.b-cdn.net/pics/mini/teams/13_20130125.webp",aL:"https://sportstv-img.b-cdn.net/pics/mini/teams/11_20130125.webp",chs:["M+ LaLiga"]},
+    {h:"Celta",a:"Real Oviedo",time:"18:30",hL:"https://sportstv-img.b-cdn.net/pics/mini/teams/22_20130125.webp",aL:"https://sportstv-img.b-cdn.net/pics/mini/teams/261_20140807.webp",chs:["DAZN LaLiga","DAZN"]},
+    {h:"Athletic Club",a:"Villarreal",time:"21:00",hL:"https://sportstv-img.b-cdn.net/pics/mini/teams/10_20130125.webp",aL:"https://sportstv-img.b-cdn.net/pics/mini/teams/17_20130125.webp",chs:["Teledeporte","M+ LaLiga","DAZN"]},
+  ]},
+  {comp:"Liga Hypermotion ⚡", matches:[
+    {h:"Granada C.F.",a:"Cultural Leonesa",time:"14:00",hL:"https://sportstv-img.b-cdn.net/pics/mini/teams/16_20130125.webp",aL:"https://sportstv-img.b-cdn.net/pics/mini/teams/260_20140807.webp",chs:["LaLiga TV Hypermotion","DAZN"]},
+    {h:"Huesca",a:"Deportivo",time:"16:15",hL:"https://sportstv-img.b-cdn.net/pics/mini/teams/38_20130125.webp",aL:"https://sportstv-img.b-cdn.net/pics/mini/teams/21_20130125.webp",chs:["Gol Play","LaLiga TV Hypermotion","DAZN"]},
+    {h:"Mirandés",a:"C.D. Castellón",time:"18:30",hL:"https://sportstv-img.b-cdn.net/pics/mini/teams/90_20130125.webp",aL:"https://sportstv-img.b-cdn.net/pics/mini/teams/507_20180807.webp",chs:["LaLiga TV Hypermotion 2","DAZN"]},
+    {h:"Racing Santander",a:"Almería",time:"21:00",hL:"https://sportstv-img.b-cdn.net/pics/mini/teams/20_20130125.webp",aL:"https://sportstv-img.b-cdn.net/pics/mini/teams/24_20130125.webp",chs:["LaLiga TV Hypermotion","DAZN"]},
+  ]},
+  {comp:"Premier League 🏴󠁧󠁢󠁥󠁮󠁧󠁿", matches:[
+    {h:"Sunderland",a:"Tottenham",time:"15:00",hL:"https://sportstv-img.b-cdn.net/pics/mini/teams/299_20141227.webp",aL:"https://sportstv-img.b-cdn.net/pics/mini/teams/154_20130806.webp",chs:["DAZN","DAZN 2"]},
+    {h:"Crystal Palace",a:"Newcastle",time:"15:00",hL:"https://sportstv-img.b-cdn.net/pics/mini/teams/300_20150103.webp",aL:"https://sportstv-img.b-cdn.net/pics/mini/teams/249_20140723.webp",chs:["DAZN","DAZN 3"]},
+    {h:"Chelsea",a:"Manchester City",time:"17:30",hL:"https://sportstv-img.b-cdn.net/pics/mini/teams/45_20130204.webp",aL:"https://sportstv-img.b-cdn.net/pics/mini/teams/99_20130204.webp",chs:["M+ Liga de Campeones","DAZN 1","M+ Vamos"]},
+  ]},
+  {comp:"Bundesliga 🇩🇪", matches:[
+    {h:"FC Köln",a:"Werder Bremen",time:"15:30",hL:"https://sportstv-img.b-cdn.net/pics/mini/teams/373_201907230746.webp",aL:"https://sportstv-img.b-cdn.net/pics/mini/teams/244_20140721.webp",chs:["DAZN"]},
+    {h:"Stuttgart",a:"Hamburger S.V.",time:"17:30",hL:"https://sportstv-img.b-cdn.net/pics/mini/teams/442_20180727.webp",aL:"https://sportstv-img.b-cdn.net/pics/mini/teams/371_202203020609.webp",chs:["DAZN"]},
+    {h:"Mainz 05",a:"Friburgo",time:"19:30",hL:"https://sportstv-img.b-cdn.net/pics/mini/teams/374_20180727.webp",aL:"https://sportstv-img.b-cdn.net/pics/mini/teams/170_20130925.webp",chs:["DAZN"]},
+  ]},
+  {comp:"Serie A Italia 🇮🇹", matches:[
+    {h:"Parma",a:"Nápoles",time:"15:00",hL:"https://sportstv-img.b-cdn.net/pics/mini/teams/531_201901270931.webp",aL:"https://sportstv-img.b-cdn.net/pics/mini/teams/234_20140716.webp",chs:["DAZN"]},
+    {h:"Bologna",a:"U.S. Lecce",time:"18:00",hL:"https://sportstv-img.b-cdn.net/pics/mini/teams/372_201901270935.webp",aL:"https://sportstv-img.b-cdn.net/pics/mini/teams/616_201908200738.webp",chs:["DAZN"]},
+    {h:"Como 1907",a:"Inter de Milán",time:"20:45",hL:"https://sportstv-img.b-cdn.net/pics/mini/teams/3050_202208030856.webp",aL:"https://sportstv-img.b-cdn.net/pics/mini/teams/46_20130204.webp",chs:["DAZN"]},
+  ]},
+  {comp:"Primera Federación ⚽", matches:[
+    {h:"U.D. Ibiza",a:"Juv. Torremolinos",time:"12:00",hL:"https://sportstv-img.b-cdn.net/pics/mini/teams/663_202001141641.webp",aL:"https://sportstv-img.b-cdn.net/pics/mini/teams/4107_202211110738.webp",chs:["Primera Federación"]},
+    {h:"Mérida",a:"Tenerife",time:"18:15",hL:"https://sportstv-img.b-cdn.net/pics/mini/teams/505_20180821.webp",aL:"https://sportstv-img.b-cdn.net/pics/mini/teams/157_20130806.webp",chs:["Primera Federación"]},
+    {h:"Hércules",a:"At. Sanluqueño",time:"20:30",hL:"https://sportstv-img.b-cdn.net/pics/mini/teams/25_20130125.webp",aL:"https://sportstv-img.b-cdn.net/pics/mini/teams/1760_202107070732.webp",chs:["Primera Federación"]},
+  ]},
+];
+
+// ══════════════════════════════════════════════════════════
+// UI STATE
+// ══════════════════════════════════════════════════════════
+const TAB_ORDER=["TODOS","PARTIDOS","LA LIGA","LIGA DE CAMPEONES","MOVISTAR DEPORTES","FORMULA 1","DAZN","EUROSPORT","FUTBOL INT","HYPERMOTION","COPA DEL REY","MOTOR","DEPORTES","TENNIS","TDT","1RFEF","MOVISTAR"];
+const TAB_META={"TODOS":{i:"🏠",l:"TODOS"},"PARTIDOS":{i:"📅",l:"PARTIDOS HOY"},"LA LIGA":{i:"🇪🇸",l:"LA LIGA"},"LIGA DE CAMPEONES":{i:"⭐",l:"CHAMPIONS"},"MOVISTAR DEPORTES":{i:"📺",l:"M+ DEPORTES"},"FORMULA 1":{i:"🏎️",l:"F1"},"DAZN":{i:"🎯",l:"DAZN"},"EUROSPORT":{i:"🌍",l:"EUROSPORT"},"FUTBOL INT":{i:"🌐",l:"FÚTBOL INT"},"HYPERMOTION":{i:"⚡",l:"HYPERMOTION"},"COPA DEL REY":{i:"🏆",l:"COPA REY"},"MOTOR":{i:"🏍️",l:"MOTOR"},"DEPORTES":{i:"🎽",l:"DEPORTES"},"TENNIS":{i:"🎾",l:"TENIS"},"TDT":{i:"📡",l:"TDT"},"1RFEF":{i:"⚽",l:"1ª RFEF"},"MOVISTAR":{i:"📱",l:"MOVISTAR"}};
+
+let grp="TODOS", srch="", moUrl="";
+
+function qcls(q){return q==='FHD'?'qf':q==='HD'?'qh':q==='4K'?'q4':q==='SD'?'qs':''}
+
+function buildStats(){
+  const gs=new Set(CH.map(c=>c.g));
+  const tot=matchesData?matchesData.reduce((s,c)=>s+c.matches.length,0):0;
+  document.getElementById('sbar').innerHTML=
+    `<div class="si"><span class="sn">${CH.length}</span><span class="sl">CANALES</span></div>`+
+    `<div class="si"><span class="sn">${gs.size}</span><span class="sl">CATEGORÍAS</span></div>`+
+    `<div class="si"><span class="sn">${CH.filter(c=>c.q==='FHD').length}</span><span class="sl">FHD</span></div>`+
+    `<div class="si"><span class="sn">${CH.filter(c=>c.q==='4K').length}</span><span class="sl">4K</span></div>`+
+    (tot?`<div class="si"><span class="sn">${tot}</span><span class="sl">PARTIDOS HOY</span></div>`:'');
+}
+
+function buildTabs(){
+  const used=new Set(CH.map(c=>c.g));
+  const tabs=TAB_ORDER.filter(g=>g==="TODOS"||g==="PARTIDOS"||used.has(g));
+  document.getElementById('tw').innerHTML=tabs.map(g=>{
+    const m=TAB_META[g]||{i:"📺",l:g};
+    return `<div class="tab${g===grp?' active':''}" onclick="setGrp('${g}')">${m.i} ${m.l}</div>`;
+  }).join('');
+}
+
+function setGrp(g){grp=g;srch="";document.getElementById('srch').value="";buildTabs();render();}
+
+// ── CHANNEL CARD ──
+function cardHTML(c){
+  const bid='cp'+c.id.slice(0,8);
+  const lg=c.lo?`<img class="clg" src="${c.lo}" loading="lazy" onerror="this.style.display='none';this.nextSibling.style.display='flex'"><div class="clb" style="display:none">${c.n.slice(0,5)}</div>`:`<div class="clb">${c.n.slice(0,5)}</div>`;
+  const sn=c.n.replace(/'/g,"\\'");
+  return `<div class="cc"><div class="clw">${lg}<span class="csb">${c.ic}</span></div><div class="ci"><div class="cn" title="${c.n}">${c.n}</div><div class="cm"><span class="cs">${c.s}</span>${c.q?`<span class="cq ${qcls(c.q)}">${c.q}</span>`:''}</div></div><div class="ca"><button class="bpl" onclick="openMo('${sn}','${c.id}')">▶ ABRIR</button><button class="bcp" id="${bid}" onclick="cpLink('${c.id}','${bid}')">📋 COPIAR</button></div></div>`;
+}
+
+// ── MATCH CARD with channel buttons ──
+function matchHTML(m){
+  // Build channel buttons: for each TV channel, show ACE buttons + copy
+  let chBtns = '';
+  let hasAce = false;
+  (m.chs||[]).forEach(ch=>{
+    const ids = resolveIds(ch);
+    if(ids.length > 0){
+      hasAce = true;
+      const sn = (m.h+' - '+m.a).replace(/'/g,"\\'");
+      // First ID = main open button, rest = copy options
+      const bid = 'mc'+ids[0].slice(0,8);
+      chBtns += `<button class="mc-ch-btn mc-ch-ace" onclick="openMo('${sn}','${ids[0]}')" title="${ch}">▶ ${ch}</button>`;
+      if(ids.length > 1){
+        chBtns += `<button class="mc-ch-btn mc-ch-copy" id="${bid}" onclick="cpMatchLinks(${JSON.stringify(ids)},'${bid}')" title="Copiar todos los enlaces de ${ch}">📋 ${ids.length} enlaces</button>`;
+      } else {
+        chBtns += `<button class="mc-ch-btn mc-ch-copy" id="${bid}" onclick="cpLink('${ids[0]}','${bid}')" title="Copiar enlace ${ch}">📋</button>`;
+      }
+    } else {
+      chBtns += `<span class="mc-ch-btn mc-ch-other">${ch}</span>`;
+    }
+  });
+  if(!hasAce && !chBtns){
+    chBtns = `<span class="mc-ch-btn mc-ch-other" style="font-size:10px;color:var(--mu)">Sin enlace ACE</span>`;
+  }
+  return `<div class="mc">
+    <div class="mc-top">
+      <div class="tb"><img class="tl" src="${m.hL||''}" onerror="this.style.display='none'" loading="lazy"><span class="tn">${m.h}</span></div>
+      <div class="mt"><div class="mh">${m.time}</div><div class="mv">VS</div></div>
+      <div class="tb r"><img class="tl" src="${m.aL||''}" onerror="this.style.display='none'" loading="lazy"><span class="tn">${m.a}</span></div>
+    </div>
+    <div class="mc-chs">${chBtns}</div>
+  </div>`;
+}
+
+function renderLoading(){
+  document.getElementById('main').innerHTML=`<div class="loading"><div class="spin"></div><br>Cargando partidos...</div>`;
+}
+
+function renderMatches(){
+  const data = matchesData || FALLBACK_MATCHES;
+  const today = new Date().toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'});
+  let html=`<div class="mday"><div class="mday-hd">📅 ${today.toUpperCase()}</div>`;
+  data.forEach(comp=>{
+    html+=`<div class="mcomp">${comp.comp}</div>`;
+    (comp.matches||[]).forEach(m=>{html+=matchHTML(m);});
+  });
+  html+='</div>';
+  document.getElementById('main').innerHTML=html;
+}
+
+function render(){
+  if(grp==="PARTIDOS"){
+    if(!matchesData) renderLoading();
+    else renderMatches();
+    return;
+  }
+  const el=document.getElementById('main');
+  const fil=CH.filter(c=>{
+    const mg=grp==="TODOS"||c.g===grp;
+    const q=srch.toLowerCase();
+    return mg&&(!q||c.n.toLowerCase().includes(q)||c.g.toLowerCase().includes(q)||c.s.toLowerCase().includes(q));
+  });
+  if(!fil.length){el.innerHTML=`<div class="empty"><div class="empty-i">📭</div><div class="empty-t">Sin resultados</div><p>No se encontraron canales.</p></div>`;return;}
+  if(grp==="TODOS"&&!srch){
+    const bg={};fil.forEach(c=>{if(!bg[c.g])bg[c.g]=[];bg[c.g].push(c);});
+    const ord=TAB_ORDER.filter(g=>g!=="TODOS"&&g!=="PARTIDOS"&&bg[g]);
+    el.innerHTML=ord.map(g=>{const m=TAB_META[g]||{i:"📺"};return`<div style="margin-bottom:24px"><div class="ch"><span class="chi">${m.i}</span><div class="cht">${g}</div><div class="chc">${bg[g].length} canales</div></div><div class="cg">${bg[g].map(cardHTML).join('')}</div></div>`;}).join('');
+  }else{
+    const m=grp!=="TODOS"?(TAB_META[grp]||{i:"📺"}):{i:"🔍"};
+    const t=grp==="TODOS"?"BÚSQUEDA":grp;
+    el.innerHTML=`<div class="ch"><span class="chi">${m.i}</span><div class="cht">${t}</div><div class="chc">${fil.length} canales</div></div><div class="cg">${fil.map(cardHTML).join('')}</div>`;
+  }
+}
+
+// ── MODAL ──
+function openMo(name,id){
+  moUrl=`acestream://${id}`;
+  document.getElementById('moT').textContent=name;
+  document.getElementById('moL').textContent=moUrl;
+  document.getElementById('moA').href=moUrl;
+  document.getElementById('moC').textContent='📋 COPIAR';
+  document.getElementById('mov').classList.add('open');
+}
+function closeMo(){document.getElementById('mov').classList.remove('open');}
+function copyMo(){
+  doCopy(moUrl,()=>{document.getElementById('moC').textContent='✓ COPIADO';setTimeout(()=>document.getElementById('moC').textContent='📋 COPIAR',2000);});
+}
+
+// ── COPY ──
+function cpLink(id,bid){
+  doCopy(`acestream://${id}`,()=>{
+    const b=document.getElementById(bid);
+    if(b){const p=b.textContent;b.textContent='✓';b.classList.add('ok');setTimeout(()=>{b.textContent=p;b.classList.remove('ok');},1500);}
+  });
+}
+
+function cpMatchLinks(ids,bid){
+  const links=ids.map(id=>`acestream://${id}`).join('\n');
+  doCopy(links,()=>{
+    const b=document.getElementById(bid);
+    if(b){const p=b.textContent;b.textContent='✓ OK';b.classList.add('ok');setTimeout(()=>{b.textContent=p;b.classList.remove('ok');},1500);}
+  });
+}
+
+function doCopy(text, cb){
+  const done=()=>{showToast('✓ Copiado al portapapeles');if(cb)cb();};
+  if(navigator.clipboard){navigator.clipboard.writeText(text).then(done).catch(()=>{fbCopy(text);done();});}
+  else{fbCopy(text);done();}
+}
+function fbCopy(t){const a=document.createElement('textarea');a.value=t;a.style.cssText='position:fixed;opacity:0;left:-9999px';document.body.appendChild(a);a.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(a);}
+
+function showToast(m){
+  const t=document.getElementById('toast');
+  t.textContent=m;t.classList.add('show');
+  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+// ── SEARCH ──
+document.getElementById('srch').addEventListener('input',function(){
+  srch=this.value.trim();
+  if(srch){grp="TODOS";buildTabs();}
+  render();
+});
+document.getElementById('mov').addEventListener('click',e=>{if(e.target===document.getElementById('mov'))closeMo();});
+
+// ── AUTO REFRESH ──
+// Cada vez que se abre la pestaña PARTIDOS, verificar si los datos son del día
+function checkDateRefresh(){
+  const saved=localStorage.getItem(STORAGE_DATE);
+  if(saved!==todayStr()){
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(STORAGE_DATE);
+  }
+}
+
+// ── INIT ──
+checkDateRefresh();
+buildStats();
+buildTabs();
+render();
+// Load matches async
+loadMatches();
+
+// ══════════════════════════════════════════════════════════
+// PWA — FUNCIONAL (funciona como archivo local o servidor)
+// ══════════════════════════════════════════════════════════
+
+// 1. Manifest dinámico (no necesita archivo externo)
+(function(){
+  const manifest={
+    name:"SOCRAM TV",short_name:"SOCRAM TV",
+    description:"Canales Acestream deportivos y partidos del día",
+    start_url:"./socram-tv.html",
+    display:"standalone",
+    background_color:"#0a0a0f",
+    theme_color:"#e8192c",
+    orientation:"any",
+    icons:[{
+      src:`data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='80' fill='%23e8192c'/><text x='256' y='330' font-size='280' text-anchor='middle' fill='white'>📺</text></svg>`,
+      sizes:"512x512",type:"image/svg+xml",purpose:"any maskable"
+    }]
+  };
+  const b=new Blob([JSON.stringify(manifest)],{type:'application/manifest+json'});
+  const u=URL.createObjectURL(b);
+  const l=document.createElement('link');
+  l.rel='manifest';l.href=u;
+  document.head.appendChild(l);
+})();
+
+// 2. Service Worker como blob (funciona sin servidor)
+if('serviceWorker' in navigator){
+  const sw=`
+const V='socram-v4';
+const S=['./socram-tv.html'];
+self.addEventListener('install',e=>{
+  e.waitUntil(caches.open(V).then(c=>{
+    return Promise.allSettled(S.map(u=>c.add(u)));
+  }).then(()=>self.skipWaiting()));
+});
+self.addEventListener('activate',e=>{
+  e.waitUntil(
+    caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==V).map(k=>caches.delete(k))))
+    .then(()=>self.clients.claim())
+  );
+});
+self.addEventListener('fetch',e=>{
+  if(e.request.method!=='GET'||!e.request.url.startsWith('http'))return;
+  e.respondWith(
+    fetch(e.request).then(r=>{
+      if(r&&r.ok){
+        const cl=r.clone();
+        caches.open(V).then(c=>c.put(e.request,cl));
+      }
+      return r;
+    }).catch(()=>caches.match(e.request).then(r=>r||new Response('Sin conexión',{status:503})))
+  );
+});`;
+  const blob=new Blob([sw],{type:'application/javascript'});
+  const swUrl=URL.createObjectURL(blob);
+  navigator.serviceWorker.register(swUrl,{scope:'./'})
+    .then(()=>console.log('SW registrado ✓'))
+    .catch(e=>console.warn('SW:',e.message));
+}
+
+// 3. Install banner
+let deferredPrompt=null;
+
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();
+  deferredPrompt=e;
+  document.getElementById('ib').classList.add('show');
+});
+
+document.getElementById('btnInst').addEventListener('click',()=>{
+  if(deferredPrompt){
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(r=>{
+      deferredPrompt=null;
+      document.getElementById('ib').classList.remove('show');
+      if(r.outcome==='accepted') showToast('✓ SOCRAM TV instalada');
+    });
+  } else {
+    // Manual instructions fallback
+    const msg=`📲 CÓMO INSTALAR SOCRAM TV:\n\n` +
+      `Android Chrome: menú (⋮) → "Añadir a pantalla de inicio"\n\n` +
+      `iOS Safari: botón Compartir (□↑) → "En el pantalla de inicio"\n\n` +
+      `PC Chrome/Edge: icono ➕ en la barra de dirección`;
+    alert(msg);
+  }
+});
+
+document.getElementById('btnDis').addEventListener('click',()=>{
+  document.getElementById('ib').classList.remove('show');
+  sessionStorage.setItem('ib_dismissed','1');
+});
+
+window.addEventListener('appinstalled',()=>{
+  document.getElementById('ib').classList.remove('show');
+  showToast('✓ SOCRAM TV instalada correctamente');
+});
+
+// Mostrar banner si no está en modo standalone y no fue descartado
+if(!window.matchMedia('(display-mode: standalone)').matches && !sessionStorage.getItem('ib_dismissed')){
+  setTimeout(()=>{
+    if(!document.getElementById('ib').classList.contains('show'))
+      document.getElementById('ib').classList.add('show');
+  },1500);
+}
+</script>
+</body>
+</html>
