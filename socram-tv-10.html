@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>SOCRAM TV</title>
+<meta name="theme-color" content="#e8192c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SOCRAM TV">
+<link rel="apple-touch-icon" href="https://raw.githubusercontent.com/socramtv/SocramAce/refs/heads/main/icon-192.png">
+<link rel="manifest" id="mf">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --red:#e8192c;--rdk:#b5121f;--gold:#f5a623;
+  --dk:#0a0a0f;--dk2:#111118;--dk3:#1a1a24;
+  --tx:#e8e8f0;--mu:#7a7a9a;--br:rgba(255,255,255,.07);--cd:rgba(255,255,255,.04);
+  --gn:#00c896;--bl:#4a9eff;--fav:#f5a623;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:var(--dk);color:var(--tx);font-family:'Barlow',sans-serif;min-height:100vh;overflow-x:hidden}
+
+/* HEADER */
+header{background:var(--dk2);border-bottom:2px solid var(--red);padding:0 14px;position:sticky;top:0;z-index:300;display:flex;align-items:center;justify-content:space-between;height:54px;box-shadow:0 4px 20px rgba(232,25,44,.28)}
+.logo{display:flex;align-items:center;gap:9px}
+.logo-i{width:36px;height:36px;border-radius:8px;overflow:hidden;flex-shrink:0;box-shadow:0 0 14px rgba(232,25,44,.5)}
+.logo-i img{width:100%;height:100%;object-fit:cover;display:block}
+.logo-t{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:3px;line-height:1}
+.logo-t span{color:var(--red)}
+.live{display:flex;align-items:center;gap:5px;background:rgba(232,25,44,.14);border:1px solid var(--red);border-radius:4px;padding:3px 9px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;color:var(--red)}
+.dot{width:6px;height:6px;background:var(--red);border-radius:50%;animation:pu 1.2s infinite}
+@keyframes pu{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.6)}}
+
+/* LISTA */
+.lb{background:linear-gradient(90deg,#0c0a18,#16122a);border-bottom:1px solid rgba(74,158,255,.2);padding:7px 14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.lb-lbl{font-family:'Barlow Condensed',sans-serif;font-size:11px;color:var(--mu);flex-shrink:0;letter-spacing:.5px}
+.lb-btns{display:flex;gap:6px;flex:1}
+.lb-btn{flex:1;padding:6px 10px;border-radius:7px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;cursor:pointer;border:1px solid var(--br);background:var(--cd);color:var(--mu);transition:all .2s;text-align:center;white-space:nowrap}
+.lb-btn.on{background:rgba(74,158,255,.18);border-color:rgba(74,158,255,.5);color:var(--bl)}
+.lb-btn:hover:not(.on){border-color:var(--mu);color:var(--tx)}
+.lb-cnt{font-family:'Barlow Condensed',sans-serif;font-size:11px;color:var(--mu);margin-left:auto;flex-shrink:0}
+.lb-cnt b{color:var(--gn)}
+
+/* DOWNLOADS — nuevo diseño */
+.dlb{background:linear-gradient(90deg,#060e08,#0b1510);border-bottom:1px solid rgba(0,200,150,.18);padding:8px 14px;display:flex;flex-direction:column;gap:6px}
+.dlb-title{font-family:'Barlow Condensed',sans-serif;font-size:11px;color:var(--mu);letter-spacing:1px;text-transform:uppercase}
+.dlb-title strong{color:var(--gn)}
+.dlb-bs{display:flex;gap:6px;flex-wrap:wrap}
+.btn-dl{display:flex;align-items:center;gap:6px;background:rgba(0,200,150,.1);border:1px solid rgba(0,200,150,.28);border-radius:7px;padding:7px 13px;color:var(--gn);font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;text-decoration:none;transition:all .2s;white-space:nowrap;flex:1;justify-content:center}
+.btn-dl:hover{background:rgba(0,200,150,.2);border-color:var(--gn)}
+.btn-dl span{font-size:14px}
+
+/* INSTALL */
+#ib{display:none;background:linear-gradient(135deg,#1c0a0e,#270f16);border-bottom:1px solid rgba(232,25,44,.3);padding:9px 14px;align-items:center;justify-content:space-between;gap:8px}
+#ib.show{display:flex}
+.ib-t{font-family:'Barlow Condensed',sans-serif;font-size:12px;color:var(--tx)}
+.ib-t strong{color:var(--red)}
+.ib-bs{display:flex;gap:6px}
+#bInst{background:var(--red);border:none;border-radius:6px;padding:7px 12px;color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;cursor:pointer}
+#bDis{background:none;border:1px solid var(--br);border-radius:6px;padding:7px 9px;color:var(--mu);font-size:11px;cursor:pointer}
+
+/* STATS */
+.stb{background:var(--dk3);border-bottom:1px solid var(--br);padding:6px 14px;display:flex;gap:14px;overflow-x:auto;scrollbar-width:none}
+.stb::-webkit-scrollbar{display:none}
+.sti{display:flex;align-items:center;gap:5px;flex-shrink:0;font-family:'Barlow Condensed',sans-serif;font-size:11px}
+.stn{font-weight:700;color:var(--red)}
+.stl{color:var(--mu)}
+
+/* SEARCH */
+.sw{background:var(--dk2);border-bottom:1px solid var(--br);padding:9px 14px}
+.sbx{position:relative;display:flex;align-items:center}
+.sic{position:absolute;left:11px;font-size:14px;color:var(--mu);pointer-events:none;z-index:1}
+.sinp{width:100%;background:var(--dk3);border:1px solid var(--br);border-radius:8px;padding:9px 14px 9px 35px;color:var(--tx);font-family:'Barlow',sans-serif;font-size:14px;outline:none;transition:border-color .2s;-webkit-appearance:none}
+.sinp:focus{border-color:var(--red)}
+.sinp::placeholder{color:var(--mu)}
+
+/* TABS */
+.tw{background:var(--dk2);border-bottom:1px solid var(--br);overflow-x:auto;scrollbar-width:none;padding:0 14px;display:flex}
+.tw::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;padding:11px 12px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:1px;color:var(--mu);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;text-transform:uppercase}
+.tab:hover{color:var(--tx)}
+.tab.on{color:var(--red);border-bottom-color:var(--red)}
+.tab.fav-tab.on{color:var(--fav);border-bottom-color:var(--fav)}
+
+/* MAIN */
+.main{padding:14px 14px 34px;max-width:1400px;margin:0 auto}
+.cah{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--br)}
+.cai{font-size:18px;line-height:1}
+.cat{font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:2px}
+.cac{margin-left:auto;font-size:11px;color:var(--mu);font-family:'Barlow Condensed',sans-serif}
+
+/* CHANNEL GRID */
+.cg{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px;animation:fi .3s ease}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* CHANNEL CARD */
+.cc{background:var(--cd);border:1px solid var(--br);border-radius:10px;padding:11px;display:flex;align-items:center;gap:10px;transition:all .2s;position:relative;overflow:hidden}
+.cc::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--red);opacity:0;transition:opacity .2s}
+.cc:hover{background:rgba(232,25,44,.07);border-color:rgba(232,25,44,.28);transform:translateX(2px)}
+.cc:hover::before{opacity:1}
+.cc.is-fav{border-color:rgba(245,166,35,.35)}
+.cc.is-fav::before{opacity:1;background:var(--fav)}
+
+.clw{width:48px;height:48px;flex-shrink:0;background:var(--dk3);border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid var(--br);position:relative}
+.clg{width:40px;height:40px;object-fit:contain}
+.clb{font-family:'Bebas Neue',sans-serif;font-size:10px;color:var(--red);display:flex;align-items:center;justify-content:center;width:100%;height:100%;text-align:center;padding:2px;line-height:1.2}
+.csb{position:absolute;bottom:0;right:0;font-size:9px;background:rgba(0,0,0,.7);border-radius:3px 0 0 0;padding:1px 2px;line-height:1}
+
+.ci{flex:1;min-width:0}
+.cn{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600;letter-spacing:.4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px}
+.cm{display:flex;gap:4px;align-items:center;flex-wrap:wrap}
+.cs{font-size:10px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;font-weight:600;padding:2px 5px;border-radius:3px;background:rgba(255,255,255,.06);color:var(--mu)}
+.cq{font-size:10px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;font-weight:700;padding:2px 5px;border-radius:3px}
+.qf{background:rgba(245,166,35,.15);color:var(--gold)}.qh{background:rgba(0,200,150,.12);color:var(--gn)}.q4{background:rgba(120,80,255,.15);color:#a78bfa}.qs{background:rgba(255,255,255,.06);color:var(--mu)}
+
+/* CARD ACTIONS */
+.ca{flex-shrink:0;display:flex;flex-direction:column;gap:4px;align-items:flex-end}
+.ca-top{display:flex;gap:4px}
+.bpl{background:var(--red);border:none;border-radius:6px;padding:7px 9px;color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all .2s;white-space:nowrap}
+.bpl:hover{background:var(--rdk);transform:scale(1.04)}
+.bfav{background:none;border:1px solid var(--br);border-radius:6px;padding:6px 7px;font-size:14px;cursor:pointer;transition:all .2s;line-height:1}
+.bfav:hover{border-color:var(--fav);transform:scale(1.1)}
+.bfav.on{background:rgba(245,166,35,.15);border-color:var(--fav)}
+.bcp{background:var(--dk3);border:1px solid var(--br);border-radius:6px;padding:5px 7px;color:var(--mu);font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;cursor:pointer;transition:all .2s;width:100%}
+.bcp:hover{color:var(--tx);border-color:var(--mu)}
+.bcp.ok{color:var(--gn);border-color:var(--gn)}
+
+/* FAVORITOS VACÍO */
+.fav-empty{text-align:center;padding:50px 20px;color:var(--mu)}
+.fav-empty-i{font-size:48px;margin-bottom:12px}
+.fav-empty-t{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:var(--tx);margin-bottom:8px}
+.fav-empty-s{font-size:13px;line-height:1.6}
+
+/* EMPTY */
+.empty{text-align:center;padding:40px 20px;color:var(--mu)}
+.empty-i{font-size:40px;margin-bottom:10px}
+.empty-t{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;margin-bottom:6px;color:var(--tx)}
+
+footer{padding:16px 14px;text-align:center;border-top:1px solid var(--br);color:var(--mu);font-size:11px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;line-height:1.9}
+footer span{color:var(--red)}
+
+/* MODAL */
+.mov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:600;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(6px)}
+.mov.open{display:flex}
+.mo{background:var(--dk2);border:1px solid var(--br);border-top:2px solid var(--red);border-radius:12px;padding:20px;max-width:440px;width:100%;animation:mi .2s ease;position:relative}
+@keyframes mi{from{transform:scale(.94);opacity:0}to{transform:scale(1);opacity:1}}
+.mo-t{font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:2px;margin-bottom:12px;padding-right:24px;line-height:1.2}
+.mo-l{background:var(--dk3);border:1px solid var(--br);border-radius:7px;padding:10px 12px;font-size:11px;color:var(--mu);font-family:monospace;word-break:break-all;margin-bottom:12px;user-select:all}
+.mo-bs{display:flex;gap:7px;flex-wrap:wrap}
+.mb{flex:1;min-width:100px;padding:9px 12px;border-radius:7px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;text-decoration:none;text-align:center;border:none;display:block;transition:all .2s}
+.mbp{background:var(--red);color:#fff}.mbp:hover{background:var(--rdk)}
+.mbs{background:var(--dk3);color:var(--tx);border:1px solid var(--br)}.mbs:hover{border-color:var(--mu)}
+.mo-x{position:absolute;top:10px;right:12px;background:none;border:none;color:var(--mu);font-size:18px;cursor:pointer;padding:3px;line-height:1}
+
+/* TOAST */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(18px);background:var(--dk3);border:1px solid var(--br);border-left:3px solid var(--gn);border-radius:8px;padding:9px 16px;font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:1px;color:var(--gn);opacity:0;transition:all .28s;z-index:9999;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media(max-width:580px){
+  .cg{grid-template-columns:1fr}
+  .main{padding:10px 10px 30px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-i">
+      <img src="https://raw.githubusercontent.com/socramtv/SocramAce/refs/heads/main/icon-192.png" alt="SOCRAM TV"
+           onerror="this.parentElement.innerHTML='<span style=font-size:18px;display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:var(--red);border-radius:8px>📺</span>'">
+    </div>
+    <div class="logo-t">SOCRAM <span>TV</span></div>
+  </div>
+  <div class="live"><div class="dot"></div>EN VIVO</div>
+</header>
+
+<!-- SELECTOR LISTA -->
+<div class="lb">
+  <span class="lb-lbl">📡 Lista:</span>
+  <div class="lb-btns">
+    <button class="lb-btn on" id="btnL1" onclick="setLista('newera')">🔴 Lista 1 · NEW ERA</button>
+    <button class="lb-btn" id="btnL2" onclick="setLista('elcano')">🟣 Lista 2 · EL CANO</button>
+  </div>
+  <div class="lb-cnt"><b id="lbCnt">0</b> canales</div>
+</div>
+
+<!-- DESCARGA ACESTREAM -->
+<div class="dlb">
+  <div class="dlb-title">⬇ <strong>Acestream</strong> para reproducir los canales:</div>
+  <div class="dlb-bs">
+    <a class="btn-dl" href="https://www.mediafire.com/file/v5bn2mkcnjwvv2l/Ace_Stream_%2540McKlaus_Appss_Dark_MOD_Arm8.apk/file" target="_blank">
+      <span>📱</span> Acestream ARM8 Móvil
+    </a>
+    <a class="btn-dl" href="https://www.mediafire.com/file/kjpzir3omat2g85/Ace_Stream_%2540McKlaus_Appss_Dark_MOD_Arm7.apk/file" target="_blank">
+      <span>📺</span> Acestream ARM7 TV y Móvil
+    </a>
+  </div>
+</div>
+
+<!-- PWA INSTALL -->
+<div id="ib">
+  <div class="ib-t">🏠 Instala <strong>SOCRAM TV</strong> como app</div>
+  <div class="ib-bs"><button id="bInst">⬇ INSTALAR</button><button id="bDis">✕</button></div>
+</div>
+
+<div class="stb" id="stb"></div>
+<div class="sw"><div class="sbx"><span class="sic">🔍</span><input class="sinp" type="search" id="srch" placeholder="Buscar canal..." autocomplete="off"></div></div>
+<div class="tw" id="tw"></div>
+<div class="main" id="main"></div>
+
+<footer>SOCRAM TV &nbsp;·&nbsp; <span>by Socram MASP</span><br>Lista 1: NEW ERA · Lista 2: EL CANO &nbsp;·&nbsp; APK: McKlaus Appss</footer>
+
+<div class="mov" id="mov">
+  <div class="mo">
+    <button class="mo-x" onclick="cMo()">✕</button>
+    <div class="mo-t" id="moT"></div>
+    <div class="mo-l" id="moL"></div>
+    <div class="mo-bs">
+      <a class="mb mbp" id="moA" href="#" target="_blank">▶ ABRIR EN ACESTREAM</a>
+      <button class="mb mbs" id="moC" onclick="cpMo()">📋 COPIAR</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// BASE DE DATOS — LISTA 1: NEW ERA
+// ═══════════════════════════════════════════════════
+const DB={
+newera:[
+// LA LIGA
+{n:"DAZN LaLiga 1 FHD",g:"LA LIGA",lo:"https://raw.githubusercontent.com/tv-logo/tv-logos/refs/heads/main/countries/spain/dazn-laliga-es.png",id:"d1596a3988b84a4d2711fd380eb8a53256ad74ae",q:"FHD",s:"NEW ERA",i:"⚽"},
+{n:"DAZN LaLiga 1 FHD",g:"LA LIGA",lo:"https://raw.githubusercontent.com/tv-logo/tv-logos/refs/heads/main/countries/spain/dazn-laliga-es.png",id:"71cb5e2567a8b39f5bdc4fa791992781b052f0bc",q:"FHD",s:"NEW ERA VI",i:"⚽"},
+{n:"DAZN LaLiga 1",g:"LA LIGA",lo:"https://raw.githubusercontent.com/tv-logo/tv-logos/refs/heads/main/countries/spain/dazn-laliga-es.png",id:"cc108ae39f92c48f6c946763047bd1c9b7b7d889",q:"",s:"ELCANO",i:"⚽"},
+{n:"DAZN LaLiga 1",g:"LA LIGA",lo:"https://raw.githubusercontent.com/tv-logo/tv-logos/refs/heads/main/countries/spain/dazn-laliga-es.png",id:"dda5d2cace9bc4cb0918e62bc50d657d4a10496a",q:"",s:"SPORT TV",i:"⚽"},
+{n:"M+ LaLiga FHD",g:"LA LIGA",lo:"https://i.ibb.co/yfV1Q8n/liga.png",id:"af458073c3096293a4dea9f369d4f308e7125bd6",q:"FHD",s:"NEW ERA",i:"⚽"},
+{n:"M+ LaLiga FHD",g:"LA LIGA",lo:"https://i.ibb.co/yfV1Q8n/liga.png",id:"b3bdd6ef7f795c4f321a3ce5cf4907338f462929",q:"FHD",s:"NEW ERA II",i:"⚽"},
+{n:"M+ LaLiga FHD",g:"LA LIGA",lo:"https://i.ibb.co/yfV1Q8n/liga.png",id:"f863873de9f7b2996dde19a0657dd89835af3007",q:"FHD",s:"NEW ERA VI",i:"⚽"},
+{n:"M+ LaLiga",g:"LA LIGA",lo:"https://i.ibb.co/yfV1Q8n/liga.png",id:"3ace1463a7cad979c3a4002b245487e9982e9f1a",q:"",s:"ELCANO",i:"⚽"},
+{n:"M+ LaLiga",g:"LA LIGA",lo:"https://i.ibb.co/yfV1Q8n/liga.png",id:"31c19ffb3472c289c5bbbbc174449c8ed0d19e38",q:"",s:"SPORT TV",i:"⚽"},
+{n:"M+ LaLiga 2 FHD",g:"LA LIGA",lo:"https://i.ibb.co/Tc97zSb/liga2.png",id:"caa631e8850e3eb5e7c039063dd8a339ccef1176",q:"FHD",s:"NEW ERA",i:"⚽"},
+{n:"M+ LaLiga 3 FHD",g:"LA LIGA",lo:"https://i.ibb.co/BZF0xG9/liga3.png",id:"c9afaf4965ad627ea6983fec9f63e0c1e857028d",q:"FHD",s:"NEW ERA",i:"⚽"},
+// LIGA DE CAMPEONES
+{n:"Liga Campeones FHD",g:"LIGA DE CAMPEONES",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/M%2B%20Liga%20de%20Campeones.png",id:"c16b4fab1f724c94cad92081cbb7fc7c6fe8a2cc",q:"FHD",s:"NEW ERA",i:"⭐"},
+{n:"Liga Campeones FHD",g:"LIGA DE CAMPEONES",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/M%2B%20Liga%20de%20Campeones.png",id:"778f08cbae9596ed9e8b2ae0af33ee7a6fe24c6a",q:"FHD",s:"NEW ERA",i:"⭐"},
+{n:"Liga Campeones FHD",g:"LIGA DE CAMPEONES",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/M%2B%20Liga%20de%20Campeones.png",id:"afbf2a479c5a5072698139f0f556ef3e77a99bd0",q:"FHD",s:"NEW ERA",i:"⭐"},
+{n:"Liga Campeones FHD",g:"LIGA DE CAMPEONES",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/M%2B%20Liga%20de%20Campeones.png",id:"afbf1ef8812e7b0a0977fa3a0a2d3a6d3cbd6c6f",q:"FHD",s:"NEW ERA II",i:"⭐"},
+{n:"Liga Campeones 2 FHD",g:"LIGA DE CAMPEONES",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/M%2B%20Liga%20de%20Campeones%202.png",id:"c6a3673f6a37b1bd3cf31fdd6404dd33d48cfccb",q:"FHD",s:"NEW ERA",i:"⭐"},
+{n:"Liga Campeones 2 FHD",g:"LIGA DE CAMPEONES",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/M%2B%20Liga%20de%20Campeones%202.png",id:"4fc6d0331830ad8743abab2fe2473b63bdfbc49f",q:"FHD",s:"NEW ERA",i:"⭐"},
+{n:"Liga Campeones 3 FHD",g:"LIGA DE CAMPEONES",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/M%2B%20Liga%20de%20Campeones%203.png",id:"07976f79d17a439d7aff46cf0d4cfdf80311caf5",q:"FHD",s:"NEW ERA",i:"⭐"},
+{n:"Liga Campeones 3 FHD",g:"LIGA DE CAMPEONES",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/M%2B%20Liga%20de%20Campeones%203.png",id:"66b373c0da20ac615996dbd1c340087f50a9a39e",q:"FHD",s:"NEW ERA",i:"⭐"},
+{n:"Liga Campeones 4 FHD",g:"LIGA DE CAMPEONES",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/M%2B%20Liga%20de%20Campeones%204.png",id:"77998f8161373611ff6b348e7eda5b4e97d3ec29",q:"FHD",s:"NEW ERA",i:"⭐"},
+{n:"Liga Campeones 5 FHD",g:"LIGA DE CAMPEONES",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/M%2B%20Liga%20de%20Campeones%205.png",id:"cb6410a6355a645cfc6f6f5a7c7d71298fcbc2c5",q:"FHD",s:"NEW ERA",i:"⭐"},
+// MOVISTAR DEPORTES
+{n:"M+ Deportes FHD",g:"MOVISTAR DEPORTES",lo:"https://i.ibb.co/CV4CLjz/deportes.png",id:"332d8fdeb9c51385230b8c9448e047ccc4a6355d",q:"FHD",s:"NEW ERA",i:"📺"},
+{n:"M+ Deportes FHD",g:"MOVISTAR DEPORTES",lo:"https://i.ibb.co/CV4CLjz/deportes.png",id:"f828a32d8ea03a3cabd3ce3ebecb249ec111c7e5",q:"FHD",s:"NEW ERA",i:"📺"},
+{n:"M+ Deportes",g:"MOVISTAR DEPORTES",lo:"https://i.ibb.co/CV4CLjz/deportes.png",id:"af393f93814d03160d48d2730759593b7bea5b47",q:"",s:"NEW ERA III",i:"📺"},
+{n:"M+ Deportes",g:"MOVISTAR DEPORTES",lo:"https://i.ibb.co/CV4CLjz/deportes.png",id:"6e031aed136bf97d8667fcd5fc49c73256928281",q:"",s:"ELCANO",i:"📺"},
+{n:"M+ Deportes 2 HD",g:"MOVISTAR DEPORTES",lo:"https://i.ibb.co/q95fBKV/deportes2.png",id:"3afe1af18f8ff78e9946856911b00c67477052b5",q:"HD",s:"SPORT TV",i:"📺"},
+{n:"M+ Deportes 4 FHD",g:"MOVISTAR DEPORTES",lo:"https://i.ibb.co/WDN9NN9/deportes4.png",id:"58a4c880ab18486d914751db32a12760e74b75a4",q:"FHD",s:"NEW ERA",i:"📺"},
+{n:"M+ Deportes 6 FHD",g:"MOVISTAR DEPORTES",lo:"https://raw.githubusercontent.com/tv-logo/tv-logos/refs/heads/main/countries/spain/deportes-6-por-movistar-plus-es.png",id:"e4124b2143ed75e5ce902bed61be08cc5e5c3c03",q:"FHD",s:"NEW ERA",i:"📺"},
+{n:"M+ Vamos FHD",g:"MOVISTAR DEPORTES",lo:"https://i.ibb.co/gWMRpFB/vamos.png",id:"651d6be899d1fafa107a265a9dc00ff914c1b548",q:"FHD",s:"NEW ERA",i:"📺"},
+{n:"M+ Vamos HD",g:"MOVISTAR DEPORTES",lo:"https://i.ibb.co/gWMRpFB/vamos.png",id:"8e1e515d21634315f1ef72f8ae21e76e4cf886b1",q:"HD",s:"NEW ERA III",i:"📺"},
+{n:"M+ Vamos",g:"MOVISTAR DEPORTES",lo:"https://i.ibb.co/gWMRpFB/vamos.png",id:"866a8af8faacf8fc9eb997ab5a68b4dfee4edc77",q:"",s:"ELCANO",i:"📺"},
+{n:"M+ Golf FHD",g:"MOVISTAR DEPORTES",lo:"https://i.ibb.co/Vp04N3pT/golf.png",id:"8546cff89e4ee8bf3ad31cf6457c3bc2c4341031",q:"FHD",s:"NEW ERA",i:"⛳"},
+// FORMULA 1
+{n:"DAZN F1 4K",g:"FORMULA 1",lo:"https://i.ibb.co/2Ndmtbp/f1.png",id:"c8ad94585fbe13cfc9074c2b5e23fb6344e0f66d",q:"4K",s:"NEW ERA",i:"🏎️"},
+{n:"DAZN F1 FHD",g:"FORMULA 1",lo:"https://i.ibb.co/2Ndmtbp/f1.png",id:"6422e8bc34282871634c81947be093c04ad1bb29",q:"FHD",s:"NEW ERA",i:"🏎️"},
+{n:"DAZN F1 FHD",g:"FORMULA 1",lo:"https://i.ibb.co/2Ndmtbp/f1.png",id:"c9c18ae7a9dafba1caae5beb22060f9c92bba553",q:"FHD",s:"NEW ERA",i:"🏎️"},
+{n:"DAZN F1 FHD",g:"FORMULA 1",lo:"https://i.ibb.co/2Ndmtbp/f1.png",id:"b5f3cc5cd66c98bae9d65df43ecee6c02d18aebd",q:"FHD",s:"NEW ERA II",i:"🏎️"},
+{n:"DAZN F1 FHD",g:"FORMULA 1",lo:"https://i.ibb.co/2Ndmtbp/f1.png",id:"724f9b252b11064e3f16220717fd52bd3a510b5f",q:"FHD",s:"NEW ERA VI",i:"🏎️"},
+{n:"DAZN F1 HD",g:"FORMULA 1",lo:"https://i.ibb.co/2Ndmtbp/f1.png",id:"6d325cda6ed591647ef5e91edd043147bce8be30",q:"HD",s:"NEW LOOP",i:"🏎️"},
+{n:"DAZN F1",g:"FORMULA 1",lo:"https://i.ibb.co/2Ndmtbp/f1.png",id:"b04372b9543d763bd2dbd2a1842d9723fd080076",q:"",s:"SPORT TV",i:"🏎️"},
+// DAZN
+{n:"DAZN 1 FHD",g:"DAZN",lo:"https://i.ibb.co/FVzKq1y/dazn1.png",id:"691739972eb3468cf16b25e84dafdeaa40dead6d",q:"FHD",s:"NEW ERA",i:"🎯"},
+{n:"DAZN 1",g:"DAZN",lo:"https://i.ibb.co/FVzKq1y/dazn1.png",id:"d5b2c6b940cf3df5e8f9dc6f000f0ea23a10b151",q:"",s:"SPORT TV",i:"🎯"},
+{n:"DAZN 2 FHD",g:"DAZN",lo:"https://i.ibb.co/Kz0GXSX/dazn2.png",id:"8b081c8afbd9beafc8c5fbf0115eb36eadb07a35",q:"FHD",s:"NEW ERA",i:"🎯"},
+{n:"DAZN 2 FHD",g:"DAZN",lo:"https://i.ibb.co/Kz0GXSX/dazn2.png",id:"fb2dd566824658eeab27aae19a01c09430f1a97d",q:"FHD",s:"NEW ERA",i:"🎯"},
+{n:"DAZN 2",g:"DAZN",lo:"https://i.ibb.co/Kz0GXSX/dazn2.png",id:"b0eabe0fdd02fdd165896236765a9b753a2ff516",q:"",s:"SPORT TV",i:"🎯"},
+{n:"DAZN 3 FHD",g:"DAZN",lo:"https://i.ibb.co/2vkThM3/dazn3.png",id:"d641cd0fca0f467b3130754a091e2f4d22e68eb1",q:"FHD",s:"NEW ERA",i:"🎯"},
+{n:"DAZN 3 FHD",g:"DAZN",lo:"https://i.ibb.co/2vkThM3/dazn3.png",id:"8a86cd6152154a25ad4b76523160552a40313b28",q:"FHD",s:"NEW ERA",i:"🎯"},
+{n:"DAZN 3",g:"DAZN",lo:"https://i.ibb.co/2vkThM3/dazn3.png",id:"d1d9ec2361a6ac8edc0b2841866383768cc28df9",q:"",s:"SPORT TV",i:"🎯"},
+{n:"DAZN 4 FHD",g:"DAZN",lo:"https://i.ibb.co/R4LBVWP/dazn4.png",id:"7e27e46c25d4308d16098d9dc67fcd8736e8c1f0",q:"FHD",s:"NEW ERA",i:"🎯"},
+{n:"DAZN 4 FHD",g:"DAZN",lo:"https://i.ibb.co/R4LBVWP/dazn4.png",id:"c015d37d1ead8155b1e7b97e743a1fe9850f0af5",q:"FHD",s:"NEW ERA",i:"🎯"},
+{n:"DAZN 4",g:"DAZN",lo:"https://i.ibb.co/R4LBVWP/dazn4.png",id:"7e90956539f4e1318a63f3960e4f75c7c7c5a3b8",q:"",s:"SPORT TV",i:"🎯"},
+// EUROSPORT
+{n:"Eurosport 1 FHD",g:"EUROSPORT",lo:"https://i.ibb.co/r2Yd7xD/euro1.png",id:"714e14e6d6e27660fd25a75b57b0ac5580fe705d",q:"FHD",s:"NEW ERA",i:"🌍"},
+{n:"Eurosport 1",g:"EUROSPORT",lo:"https://i.ibb.co/r2Yd7xD/euro1.png",id:"a7b42f9d65636d1b1d9316d3e91ebe12b192658c",q:"",s:"ELCANO",i:"🌍"},
+{n:"Eurosport 1 HD",g:"EUROSPORT",lo:"https://i.ibb.co/r2Yd7xD/euro1.png",id:"547ab7146a86d6119c9332c011669544720124e3",q:"HD",s:"NEW LOOP",i:"🌍"},
+{n:"Eurosport 2 FHD",g:"EUROSPORT",lo:"https://i.ibb.co/M6h4Qyd/euro2.png",id:"dc4ccb9e72550bc72be9360aa7d77e337ad11ecc",q:"FHD",s:"NEW ERA",i:"🌍"},
+{n:"Eurosport 2 HD",g:"EUROSPORT",lo:"https://i.ibb.co/M6h4Qyd/euro2.png",id:"6176281b9c46a5621a0e88524f8dc621f173b8e0",q:"HD",s:"SPORT TV",i:"🌍"},
+// FUTBOL INT
+{n:"BEIN Sports 1",g:"FUTBOL INT",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/beIN%20SPORTS%201.png",id:"bba1905fcd1c4975aec544047bf8e4cd23ce3fe0",q:"",s:"SPORT TV",i:"⚽"},
+{n:"BEIN Sports 2",g:"FUTBOL INT",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/beIN%20SPORTS%202.png",id:"edb507e38394d614c9ff55805c9d354ae13210bc",q:"",s:"SPORT TV",i:"⚽"},
+{n:"BT Sport 1 UK",g:"FUTBOL INT",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/TNT%20Sports%201.png",id:"fc5089d8e1519872fdf951779ccbca913acc9bce",q:"",s:"SPORT TV",i:"⚽"},
+{n:"BT Sport 2 UK",g:"FUTBOL INT",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/TNT%20Sports%202.png",id:"d63d8a57cf471394bfa9f619bbd68b01ae27a801",q:"",s:"SPORT TV",i:"⚽"},
+{n:"Eleven DAZN 1 HD",g:"FUTBOL INT",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/DAZN%201.png",id:"14407b00d454cb7dc0d70aa26e8bbc554f457f00",q:"HD",s:"SPORT TV",i:"⚽"},
+{n:"Eleven DAZN 2 HD",g:"FUTBOL INT",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/DAZN%202.png",id:"54a4a28882d3cae1ca19de5d4b022ebea40351f9",q:"HD",s:"SPORT TV",i:"⚽"},
+{n:"ESPN Argentina",g:"FUTBOL INT",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/ESPN.png",id:"4bf4431b4815f07c1b3749f5a10f905ba566cd47",q:"",s:"NEW ERA",i:"⚽"},
+{n:"Premier Sports 1",g:"FUTBOL INT",lo:"https://i.ibb.co/10xGrD4/Premier1.png",id:"75a56863b6fe0407ad4305b4d7ee5643c3923565",q:"",s:"SPORT TV",i:"⚽"},
+// HYPERMOTION
+{n:"Hypermotion FHD",g:"HYPERMOTION",lo:"https://i.ibb.co/CBdGc9f/hypermotion1.png",id:"58b1c4b8cb65d648505b035a04e879672fcd8e3f",q:"FHD",s:"NEW ERA",i:"⚡"},
+{n:"Hypermotion FHD",g:"HYPERMOTION",lo:"https://i.ibb.co/CBdGc9f/hypermotion1.png",id:"fc129b39c253b887563c3f0dce5fca7e699c3047",q:"FHD",s:"NEW ERA VI",i:"⚡"},
+{n:"Hypermotion",g:"HYPERMOTION",lo:"https://i.ibb.co/CBdGc9f/hypermotion1.png",id:"1f75d92098580443857caa95a719103cb83781b0",q:"",s:"ELCANO",i:"⚡"},
+{n:"Hypermotion 2",g:"HYPERMOTION",lo:"https://i.ibb.co/8K0VrQV/hypermotion2.png",id:"3a21e651c0bffe810cfc8537065cb81f5ed68a55",q:"",s:"ELCANO",i:"⚡"},
+// COPA DEL REY
+{n:"Copa del Rey",g:"COPA DEL REY",lo:"https://i.ibb.co/m54QH9Gt/copa.png",id:"4b9f813f30b4345fe555f9e218d828d76cd6ee88",q:"",s:"NEW ERA",i:"🏆"},
+{n:"Copa del Rey",g:"COPA DEL REY",lo:"https://i.ibb.co/m54QH9Gt/copa.png",id:"63ad519ec9602ea12f7867cf15914b2537bbf04a",q:"",s:"NEW ERA",i:"🏆"},
+// MOTOR
+{n:"DAZN MotoGP",g:"MOTOR",lo:"https://i.ibb.co/2Ndmtbp/f1.png",id:"11cbb5346d28af0b972e646832f4be23dd39502d",q:"",s:"NEW ERA",i:"🏍️"},
+{n:"DAZN MotoGP FHD",g:"MOTOR",lo:"https://i.ibb.co/2Ndmtbp/f1.png",id:"18b03739d660f0066364343e226e437bf2555d56",q:"FHD",s:"NEW ERA VI",i:"🏍️"},
+{n:"Motors TV HD",g:"MOTOR",lo:"https://www.mxgp.com/sites/default/files/news/image/logo%20Motors%20TV.jpg",id:"442aeb6643b8836f9d00361c9e48eeb0841ddf98",q:"HD",s:"NEW LOOP",i:"🏍️"},
+// DEPORTES
+{n:"Teledeporte FHD",g:"DEPORTES",lo:"https://i.ibb.co/fb9dbDW/tdp.png",id:"2d997da301573c5aba78f969d0d37eb6107941b2",q:"FHD",s:"NEW ERA",i:"📡"},
+{n:"Teledeporte FHD",g:"DEPORTES",lo:"https://i.ibb.co/fb9dbDW/tdp.png",id:"7d910d9480e023608d1fe77eaf47c2ed34592155",q:"FHD",s:"NEW ERA",i:"📡"},
+{n:"Teledeporte",g:"DEPORTES",lo:"https://i.ibb.co/fb9dbDW/tdp.png",id:"b0d1489c9f3239349665ad5ab423363f2b02e5ae",q:"",s:"ELCANO",i:"📡"},
+{n:"Gol Play FHD",g:"DEPORTES",lo:"https://assets.laliga.com/assets/2023/07/13/medium/60e1502d7d6098162828bb002e98bdb4.png",id:"9fb99c40a2c45d5c5342b30626eb56140f980612",q:"FHD",s:"NEW ERA",i:"⚽"},
+{n:"Gol Play FHD",g:"DEPORTES",lo:"https://assets.laliga.com/assets/2023/07/13/medium/60e1502d7d6098162828bb002e98bdb4.png",id:"b2d560741c006fc5e4a42412bb52dbd25a6a4a3a",q:"FHD",s:"NEW ERA",i:"⚽"},
+{n:"Sky Sports Arena",g:"DEPORTES",lo:"https://tvprofil.com/img/kanali-logo/Sky_Sports_Arena_GB_logo.png?1734015005",id:"d317a003e8047da2c36a2a2bb2289578c9a3b79c",q:"",s:"SPORT TV",i:"🎽"},
+// TENNIS
+{n:"Tennis Channel FHD",g:"TENNIS",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/Tennis%20Channel.png",id:"71698ee415b6ba3f123aac1c8c37cc97376f20d0",q:"FHD",s:"NEW ERA",i:"🎾"},
+// TDT
+{n:"La 1 FHD",g:"TDT",lo:"https://i.ibb.co/Vf2GT70/la1.png",id:"dad5e0e0825cb3e410008f1c4252387b868e740c",q:"FHD",s:"NEW ERA",i:"📡"},
+{n:"La 2 FHD",g:"TDT",lo:"https://i.ibb.co/YFzzqWw5/la2.png",id:"9934906503661142f97a044ae1509a294057c2ed",q:"FHD",s:"NEW ERA",i:"📡"},
+{n:"La Sexta FHD",g:"TDT",lo:"https://i.ibb.co/SX1jhBzy/lasexta.png",id:"44828a7580cd99fcb36245c327889c47f34b457f",q:"FHD",s:"NEW ERA",i:"📡"},
+// 1RFEF
+{n:"Canal 1 (1RFEF)",g:"1RFEF",lo:"https://static.wikia.nocookie.net/logopedia/images/d/df/Logo_Primera_RFEF_2021.png/revision/latest?cb=20230620215900&path-prefix=es",id:"c1ee6e1e0ef5928d8261f855c417de21794f437d",q:"",s:"NEW ERA",i:"⚽"},
+{n:"Canal 2 (1RFEF)",g:"1RFEF",lo:"https://static.wikia.nocookie.net/logopedia/images/d/df/Logo_Primera_RFEF_2021.png/revision/latest?cb=20230620215900&path-prefix=es",id:"8677d339ecddd75165c0015025f598b6215974cf",q:"",s:"NEW ERA",i:"⚽"},
+{n:"Primera Federación FHD",g:"1RFEF",lo:"https://static.wikia.nocookie.net/logopedia/images/d/df/Logo_Primera_RFEF_2021.png/revision/latest?cb=20230620215900&path-prefix=es",id:"599a2fda91aa55703e2c5a51562d9dbf5d3d31d9",q:"FHD",s:"NEW ERA",i:"⚽"},
+// MOVISTAR — canales generales + nuevos
+{n:"Movistar Plus+",g:"MOVISTAR",lo:"https://i.ibb.co/hFYPWbpJ/plus.png",id:"8c67cdb5ba81976662c3a67984a9545d9cfb0f70",q:"FHD",s:"NEW ERA",i:"📱"},
+{n:"Movistar Plus+",g:"MOVISTAR",lo:"https://i.ibb.co/hFYPWbpJ/plus.png",id:"b6ffbbc72a5b6b579faf79ebac229af7a25b933b",q:"FHD",s:"NEW ERA",i:"📱"},
+{n:"Movistar Plus+",g:"MOVISTAR",lo:"https://i.ibb.co/hFYPWbpJ/plus.png",id:"c1b7f54af0de256d1ac0fcac4c130e62660089f4",q:"FHD",s:"NEW ERA VI",i:"📱"},
+{n:"Disney Junior Spain",g:"MOVISTAR",lo:"https://raw.githubusercontent.com/tv-logo/tv-logos/refs/heads/main/countries/spain/disney-junior-es.png",id:"280a92fe6ab989ff95cc744ab3e22b50e7829bed",q:"",s:"NEW LOOP",i:"🎠"},
+{n:"M+ Accion HD",g:"MOVISTAR",lo:"https://github.com/davidmuma/picons_dobleM/blob/master/icon/M%2B%20Acci%C3%B3n%20HD.png?raw=true",id:"2fb689d18a62b52dac5a4a39b013b7d9ba296751",q:"HD",s:"NEW LOOP",i:"🎬"},
+{n:"M+ Cine Español HD",g:"MOVISTAR",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/refs/heads/master/icon/M%2B%20Cine%20Espa%C3%B1ol%20HD.png",id:"dc044c79fcde8ed69ed4c878643b09f09e7ccb72",q:"HD",s:"NEW LOOP",i:"🎬"},
+{n:"M+ Comedia HD",g:"MOVISTAR",lo:"https://raw.githubusercontent.com/tv-logo/tv-logos/refs/heads/main/countries/spain/comedia-por-movistar-plus-es.png",id:"b5b4cf132f1c655ed2f0aaa759a6012db140740a",q:"HD",s:"NEW LOOP",i:"😂"},
+{n:"M+ Drama HD",g:"MOVISTAR",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/refs/heads/master/icon/M%2B%20Originales%20HD.png",id:"fc469b1e22f9a75bf7079995876955b9b293ef7e",q:"HD",s:"NEW LOOP",i:"🎭"},
+{n:"M+ Hits HD",g:"MOVISTAR",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/refs/heads/master/icon/M%2B%20Hits.png",id:"bb78482832c454dfbb932912d65726619f924873",q:"HD",s:"NEW LOOP",i:"🎬"},
+{n:"M+ Originales HD",g:"MOVISTAR",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/refs/heads/master/icon/M%2B%20Originales%20HD.png",id:"0364449064d322a1bc0f97d568452053810ef8bc",q:"HD",s:"NEW LOOP",i:"⭐"},
+{n:"SkyShowtime 1",g:"MOVISTAR",lo:"https://raw.githubusercontent.com/tv-logo/tv-logos/refs/heads/main/countries/spain/skyshowtime-es.png",id:"d98f8926ec3c7c403cec32530f2ab7725cf88bcf",q:"",s:"NEW LOOP",i:"🎬"},
+{n:"SYFY HD",g:"MOVISTAR",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/Syfy.png",id:"0abff11099cfe1bb45fac7fd29e996a68a9f1463",q:"HD",s:"NEW LOOP",i:"🛸"},
+{n:"Calle 13 HD",g:"MOVISTAR",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/Canal%2013.png",id:"91d38e143c3495dabf3ddf0497af98a227aeb613",q:"HD",s:"NEW LOOP",i:"🎬"},
+{n:"HBO Max Avances",g:"MOVISTAR",lo:"https://raw.githubusercontent.com/tv-logo/tv-logos/refs/heads/main/countries/spain/max-es.png",id:"039719b35e6987a9b5888a8f4b903b3d31d2552d",q:"",s:"NEW LOOP",i:"🎬"},
+],
+
+// ═══════════════════════════════════════════════════
+// LISTA 2: EL CANO
+// ═══════════════════════════════════════════════════
+elcano:[
+{n:"DAZN LaLiga 720p",g:"LA LIGA",lo:"https://raw.githubusercontent.com/tv-logo/tv-logos/refs/heads/main/countries/spain/dazn-laliga-es.png",id:"eb4975702ceadca7ed74f8707e17a9f55569dbb9",q:"HD",s:"EL CANO",i:"⚽"},
+{n:"DAZN LaLiga 720p",g:"LA LIGA",lo:"https://raw.githubusercontent.com/tv-logo/tv-logos/refs/heads/main/countries/spain/dazn-laliga-es.png",id:"4e6d9cf7d177366045d33cd8311d8b1d7f4bed1f",q:"HD",s:"EL CANO",i:"⚽"},
+{n:"DAZN LaLiga 1080p",g:"LA LIGA",lo:"https://raw.githubusercontent.com/tv-logo/tv-logos/refs/heads/main/countries/spain/dazn-laliga-es.png",id:"cc108ae39f92c48f6c946763047bd1c9b7b7d889",q:"FHD",s:"EL CANO",i:"⚽"},
+{n:"DAZN LaLiga 1080p",g:"LA LIGA",lo:"https://raw.githubusercontent.com/tv-logo/tv-logos/refs/heads/main/countries/spain/dazn-laliga-es.png",id:"4955867fad3bc92e5b4c36045699fc277800fb18",q:"FHD",s:"EL CANO",i:"⚽"},
+{n:"M+ LaLiga 720p",g:"LA LIGA",lo:"https://i.ibb.co/yfV1Q8n/liga.png",id:"3ace1463a7cad979c3a4002b245487e9982e9f1a",q:"HD",s:"EL CANO",i:"⚽"},
+{n:"M+ LaLiga 1080p",g:"LA LIGA",lo:"https://i.ibb.co/yfV1Q8n/liga.png",id:"0febfb5cac3384f487d55c559bbfc877db2d0357",q:"FHD",s:"EL CANO",i:"⚽"},
+{n:"M+ LaLiga 1080p",g:"LA LIGA",lo:"https://i.ibb.co/yfV1Q8n/liga.png",id:"00c9bc9c5d7d87680a5a6bed349edfa775a89947",q:"FHD",s:"EL CANO",i:"⚽"},
+{n:"M+ LaLiga 1080p",g:"LA LIGA",lo:"https://i.ibb.co/yfV1Q8n/liga.png",id:"c9321006921967d6258df6945f1d598a5c0cbf1e",q:"FHD",s:"EL CANO",i:"⚽"},
+{n:"M+ LaLiga 2 720p",g:"LA LIGA",lo:"https://i.ibb.co/Tc97zSb/liga2.png",id:"ad42faa399df66dcd62a1cbc9d1c99ed4512d3b8",q:"HD",s:"EL CANO",i:"⚽"},
+{n:"Hypermotion 720p",g:"HYPERMOTION",lo:"https://i.ibb.co/CBdGc9f/hypermotion1.png",id:"1f75d92098580443857caa95a719103cb83781b0",q:"HD",s:"EL CANO",i:"⚡"},
+{n:"Hypermotion 720p",g:"HYPERMOTION",lo:"https://i.ibb.co/CBdGc9f/hypermotion1.png",id:"a4f072c9b614323ac1258a175f868a909ea3c8cd",q:"HD",s:"EL CANO",i:"⚡"},
+{n:"Hypermotion 1080p",g:"HYPERMOTION",lo:"https://i.ibb.co/CBdGc9f/hypermotion1.png",id:"87bb542f974b6b9e89d0f2e20ed6dc93426f4be0",q:"FHD",s:"EL CANO",i:"⚡"},
+{n:"DAZN 1 720p",g:"DAZN",lo:"https://i.ibb.co/FVzKq1y/dazn1.png",id:"a116ce3ff95c41c60e987e2b1aa247007f707884",q:"HD",s:"EL CANO",i:"🎯"},
+{n:"DAZN 1 1080p",g:"DAZN",lo:"https://i.ibb.co/FVzKq1y/dazn1.png",id:"dddff67edfa7061f643ec5ae0be110169850363d",q:"FHD",s:"EL CANO",i:"🎯"},
+{n:"DAZN 1",g:"DAZN",lo:"https://i.ibb.co/FVzKq1y/dazn1.png",id:"9afc89481b721ce6c326c85e47148676077b8e62",q:"",s:"EL CANO",i:"🎯"},
+{n:"DAZN 1",g:"DAZN",lo:"https://i.ibb.co/FVzKq1y/dazn1.png",id:"7ba1f321f4d0791b7ebd42f41a07c1cd1479e784",q:"",s:"EL CANO",i:"🎯"},
+{n:"DAZN 2 1080p",g:"DAZN",lo:"https://i.ibb.co/Kz0GXSX/dazn2.png",id:"01ce89b571b6c89bc19ccaafc913d483ac65c61d",q:"FHD",s:"EL CANO",i:"🎯"},
+{n:"DAZN 2 1080p",g:"DAZN",lo:"https://i.ibb.co/Kz0GXSX/dazn2.png",id:"d60b8c154828cb990b7bb1570764b215bd979e74",q:"FHD",s:"EL CANO",i:"🎯"},
+{n:"DAZN 2 1080p",g:"DAZN",lo:"https://i.ibb.co/Kz0GXSX/dazn2.png",id:"13a16a0630ae87bd97d6ba4165963c201c9a2e9c",q:"FHD",s:"EL CANO",i:"🎯"},
+{n:"DAZN 3",g:"DAZN",lo:"https://i.ibb.co/2vkThM3/dazn3.png",id:"e1ccce973c71547a8acda770885cb1c30a9cf3e1",q:"",s:"EL CANO",i:"🎯"},
+{n:"Eurosport 1 1080p",g:"EUROSPORT",lo:"https://i.ibb.co/r2Yd7xD/euro1.png",id:"48a589dbeab3544662fafd79888aada7d834cfe9",q:"FHD",s:"EL CANO",i:"🌍"},
+{n:"Eurosport 2 720p",g:"EUROSPORT",lo:"https://i.ibb.co/M6h4Qyd/euro2.png",id:"5c910d614894635153a7d42de98cc2e4a958a53f",q:"HD",s:"EL CANO",i:"🌍"},
+{n:"Eurosport 2 1080p",g:"EUROSPORT",lo:"https://i.ibb.co/M6h4Qyd/euro2.png",id:"24f940fef7e270b6b3ae5d9dc713a80c8345cfba",q:"FHD",s:"EL CANO",i:"🌍"},
+{n:"Movistar Plus+ 720p",g:"MOVISTAR",lo:"https://i.ibb.co/hFYPWbpJ/plus.png",id:"d23497596720b47b096ec0f850d6d26a19d1a336",q:"HD",s:"EL CANO",i:"📱"},
+{n:"Movistar Plus+ 1080p",g:"MOVISTAR",lo:"https://i.ibb.co/hFYPWbpJ/plus.png",id:"ed74406ccdb3c21941b919db6bffca7f1de015bb",q:"FHD",s:"EL CANO",i:"📱"},
+{n:"M+ Deportes 720p",g:"MOVISTAR DEPORTES",lo:"https://i.ibb.co/CV4CLjz/deportes.png",id:"6e031aed136bf97d8667fcd5fc49c73256928281",q:"HD",s:"EL CANO",i:"📺"},
+{n:"M+ Deportes 720p",g:"MOVISTAR DEPORTES",lo:"https://i.ibb.co/CV4CLjz/deportes.png",id:"2f3cfd199a49819cbd129689a840dc3d23ab93aa",q:"HD",s:"EL CANO",i:"📺"},
+{n:"M+ Deportes 1080p",g:"MOVISTAR DEPORTES",lo:"https://i.ibb.co/CV4CLjz/deportes.png",id:"c6a824a81b36f6c3529826477caf2ad94b45776d",q:"FHD",s:"EL CANO",i:"📺"},
+{n:"M+ Deportes 2 1080p",g:"MOVISTAR DEPORTES",lo:"https://i.ibb.co/q95fBKV/deportes2.png",id:"3774d8feab016ca766b35ea8488e7514ca30e0ee",q:"FHD",s:"EL CANO",i:"📺"},
+{n:"M+ Golf 720p",g:"MOVISTAR DEPORTES",lo:"https://www.mundoplus.tv/wp-content/uploads/2023/03/golf2_movistarplus.jpg",id:"f60535a458b3c114283e2f433379144345beddd6",q:"HD",s:"EL CANO",i:"⛳"},
+{n:"M+ Golf 1080p",g:"MOVISTAR DEPORTES",lo:"https://www.mundoplus.tv/wp-content/uploads/2023/03/golf2_movistarplus.jpg",id:"9bb2a7dc6c6a296609df8cc50e742a78194f7530",q:"FHD",s:"EL CANO",i:"⛳"},
+{n:"M+ Vamos 720p",g:"MOVISTAR DEPORTES",lo:"https://i.ibb.co/gWMRpFB/vamos.png",id:"866a8af8faacf8fc9eb997ab5a68b4dfee4edc77",q:"HD",s:"EL CANO",i:"📺"},
+{n:"M+ Vamos 1080p",g:"MOVISTAR DEPORTES",lo:"https://i.ibb.co/gWMRpFB/vamos.png",id:"ad5ca6e24f87f47a9c3c5bc10c7e8e5af46767fc",q:"FHD",s:"EL CANO",i:"📺"},
+{n:"Teledeporte 720p",g:"DEPORTES",lo:"https://img2.rtve.es/n/15966755",id:"b0d1489c9f3239349665ad5ab423363f2b02e5ae",q:"HD",s:"EL CANO",i:"📡"},
+{n:"Teledeporte 1080p",g:"DEPORTES",lo:"https://img2.rtve.es/n/15966755",id:"b35b3eb8e22365bf3469efd6d1f3b82618a6e18a",q:"FHD",s:"EL CANO",i:"📡"},
+{n:"Teledeporte 1080p",g:"DEPORTES",lo:"https://img2.rtve.es/n/15966755",id:"77cf022557c56cdf8d8115f50e61f846ad72ee05",q:"FHD",s:"EL CANO",i:"📡"},
+{n:"Esport3 720p",g:"DEPORTES",lo:"https://img.3cat.cat/multimedia/jpg/1/5/1697802708951.jpg",id:"739792a3225e5eb3056f4faa7b1137c7f161f23c",q:"HD",s:"EL CANO",i:"📡"},
+{n:"Esport3 1080p",g:"DEPORTES",lo:"https://img.3cat.cat/multimedia/jpg/1/5/1697802708951.jpg",id:"8f59ce96e4c902ba2f5193af07546d7ff17fc3bc",q:"FHD",s:"EL CANO",i:"📡"},
+{n:"RFEF TV 1080p",g:"1RFEF",lo:"https://static.wikia.nocookie.net/logopedia/images/d/df/Logo_Primera_RFEF_2021.png/revision/latest?cb=20230620215900&path-prefix=es",id:"177796041773be99b489dd3ce86144f243e7355f",q:"FHD",s:"EL CANO",i:"⚽"},
+{n:"RFEF TV 1080p",g:"1RFEF",lo:"https://rfef.es/themes/custom/rfef/img/rfef-share.png",id:"3fbc1b7dc316f19b77e7f7cfc775a0af67adcc7f",q:"FHD",s:"EL CANO",i:"⚽"},
+{n:"Dazn MotoGP 1080p",g:"MOTOR",lo:"",id:"20d4b3586bb822c3618cf8fb665a304869c5e1a5",q:"FHD",s:"EL CANO",i:"🏍️"},
+{n:"Dazn MotoGP 1080p",g:"MOTOR",lo:"",id:"e18b79bce27f6ee8eef9a1fc811bb5f80e4b558c",q:"FHD",s:"EL CANO",i:"🏍️"},
+{n:"Telecinco 1080p",g:"TDT",lo:"https://i.ibb.co/81wJ3GH/telecinco.png",id:"3d376333ee90d6db3d413fc5764ef635882076f5",q:"FHD",s:"EL CANO",i:"📡"},
+// Canales Movistar extra en EL CANO también
+{n:"Disney Junior Spain",g:"MOVISTAR",lo:"https://raw.githubusercontent.com/tv-logo/tv-logos/refs/heads/main/countries/spain/disney-junior-es.png",id:"280a92fe6ab989ff95cc744ab3e22b50e7829bed",q:"",s:"EL CANO",i:"🎠"},
+{n:"M+ Accion HD",g:"MOVISTAR",lo:"https://github.com/davidmuma/picons_dobleM/blob/master/icon/M%2B%20Acci%C3%B3n%20HD.png?raw=true",id:"2fb689d18a62b52dac5a4a39b013b7d9ba296751",q:"HD",s:"EL CANO",i:"🎬"},
+{n:"M+ Cine Español HD",g:"MOVISTAR",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/refs/heads/master/icon/M%2B%20Cine%20Espa%C3%B1ol%20HD.png",id:"dc044c79fcde8ed69ed4c878643b09f09e7ccb72",q:"HD",s:"EL CANO",i:"🎬"},
+{n:"M+ Comedia HD",g:"MOVISTAR",lo:"https://raw.githubusercontent.com/tv-logo/tv-logos/refs/heads/main/countries/spain/comedia-por-movistar-plus-es.png",id:"b5b4cf132f1c655ed2f0aaa759a6012db140740a",q:"HD",s:"EL CANO",i:"😂"},
+{n:"M+ Drama HD",g:"MOVISTAR",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/refs/heads/master/icon/M%2B%20Originales%20HD.png",id:"fc469b1e22f9a75bf7079995876955b9b293ef7e",q:"HD",s:"EL CANO",i:"🎭"},
+{n:"M+ Hits HD",g:"MOVISTAR",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/refs/heads/master/icon/M%2B%20Hits.png",id:"bb78482832c454dfbb932912d65726619f924873",q:"HD",s:"EL CANO",i:"🎬"},
+{n:"M+ Originales HD",g:"MOVISTAR",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/refs/heads/master/icon/M%2B%20Originales%20HD.png",id:"0364449064d322a1bc0f97d568452053810ef8bc",q:"HD",s:"EL CANO",i:"⭐"},
+{n:"SkyShowtime 1",g:"MOVISTAR",lo:"https://raw.githubusercontent.com/tv-logo/tv-logos/refs/heads/main/countries/spain/skyshowtime-es.png",id:"d98f8926ec3c7c403cec32530f2ab7725cf88bcf",q:"",s:"EL CANO",i:"🎬"},
+{n:"SYFY HD",g:"MOVISTAR",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/Syfy.png",id:"0abff11099cfe1bb45fac7fd29e996a68a9f1463",q:"HD",s:"EL CANO",i:"🛸"},
+{n:"Calle 13 HD",g:"MOVISTAR",lo:"https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/Canal%2013.png",id:"91d38e143c3495dabf3ddf0497af98a227aeb613",q:"HD",s:"EL CANO",i:"🎬"},
+{n:"HBO Max Avances",g:"MOVISTAR",lo:"https://raw.githubusercontent.com/tv-logo/tv-logos/refs/heads/main/countries/spain/max-es.png",id:"039719b35e6987a9b5888a8f4b903b3d31d2552d",q:"",s:"EL CANO",i:"🎬"},
+]};
+
+// ═══════════════════════════════════════════════════
+// FAVORITOS — persistidos en localStorage
+// ═══════════════════════════════════════════════════
+const FAV_KEY='socram_favs_v1';
+let favs=new Set();
+
+function loadFavs(){
+  try{const d=localStorage.getItem(FAV_KEY);if(d)favs=new Set(JSON.parse(d));}catch(e){}
+}
+function saveFavs(){
+  try{localStorage.setItem(FAV_KEY,JSON.stringify([...favs]));}catch(e){}
+}
+function toggleFav(id){
+  if(favs.has(id)){favs.delete(id);showToast('⭐ Eliminado de favoritos');}
+  else{favs.add(id);showToast('⭐ Añadido a favoritos');}
+  saveFavs();
+  // Actualizar botón y borde de la card visualmente
+  const btn=document.getElementById('fav-'+id.slice(0,8));
+  const card=document.getElementById('card-'+id.slice(0,8));
+  if(btn){btn.classList.toggle('on',favs.has(id));btn.textContent=favs.has(id)?'★':'☆';}
+  if(card){card.classList.toggle('is-fav',favs.has(id));}
+  // Si estamos en favoritos, re-renderizar
+  if(curGrp==='FAVORITOS') render();
+}
+
+// ═══════════════════════════════════════════════════
+// UI STATE
+// ═══════════════════════════════════════════════════
+const GI={'LA LIGA':'🇪🇸','LIGA DE CAMPEONES':'⭐','MOVISTAR DEPORTES':'📺','FORMULA 1':'🏎️','DAZN':'🎯','EUROSPORT':'🌍','FUTBOL INT':'🌐','HYPERMOTION':'⚡','COPA DEL REY':'🏆','MOTOR':'🏍️','DEPORTES':'🎽','TENNIS':'🎾','TDT':'📡','1RFEF':'⚽','MOVISTAR':'📱','FAVORITOS':'⭐'};
+const TO=['TODOS','FAVORITOS','LA LIGA','LIGA DE CAMPEONES','MOVISTAR DEPORTES','FORMULA 1','DAZN','EUROSPORT','FUTBOL INT','HYPERMOTION','COPA DEL REY','MOTOR','DEPORTES','TENNIS','TDT','1RFEF','MOVISTAR'];
+let curLista='newera', curGrp='TODOS', srch='', moUrl='';
+const qc=q=>q==='FHD'?'qf':q==='HD'?'qh':q==='4K'?'q4':q==='SD'?'qs':'';
+
+function buildStats(){
+  const gs=new Set(DB[curLista].map(c=>c.g));
+  document.getElementById('lbCnt').textContent=DB[curLista].length;
+  document.getElementById('stb').innerHTML=
+    `<div class="sti"><span class="stn">${DB[curLista].length}</span><span class="stl">CANALES</span></div>`+
+    `<div class="sti"><span class="stn">${gs.size}</span><span class="stl">GRUPOS</span></div>`+
+    `<div class="sti"><span class="stn">${DB[curLista].filter(c=>c.q==='FHD').length}</span><span class="stl">FHD</span></div>`+
+    `<div class="sti"><span class="stn">${DB[curLista].filter(c=>c.q==='4K').length}</span><span class="stl">4K</span></div>`+
+    `<div class="sti"><span class="stn">${favs.size}</span><span class="stl">FAVORITOS</span></div>`;
+}
+
+function buildTabs(){
+  const used=new Set(DB[curLista].map(c=>c.g));
+  const tabs=TO.filter(g=>g==='TODOS'||g==='FAVORITOS'||used.has(g));
+  document.getElementById('tw').innerHTML=tabs.map(g=>{
+    const ic=GI[g]||'📺';
+    const lb=g==='LIGA DE CAMPEONES'?'CHAMPIONS':g==='MOVISTAR DEPORTES'?'M+ DEPORTES':g;
+    const isFavTab=g==='FAVORITOS';
+    return `<div class="tab${g===curGrp?' on':''}${isFavTab?' fav-tab':''}" onclick="sg('${g}')">${ic} ${lb}${isFavTab&&favs.size>0?` (${favs.size})`:''}</div>`;
+  }).join('');
+}
+
+function sg(g){curGrp=g;srch='';document.getElementById('srch').value='';buildTabs();render();}
+
+function setLista(k){
+  if(curLista===k)return;
+  curLista=k;
+  document.getElementById('btnL1').classList.toggle('on',k==='newera');
+  document.getElementById('btnL2').classList.toggle('on',k==='elcano');
+  if(curGrp!=='FAVORITOS'){curGrp='TODOS';srch='';document.getElementById('srch').value='';}
+  buildStats();buildTabs();render();
+  showToast(`✓ ${k==='newera'?'Lista 1 · NEW ERA':'Lista 2 · EL CANO'} — ${DB[k].length} canales`);
+}
+
+function cardHTML(c){
+  const bid='cp'+c.id.slice(0,8);
+  const fid='fav-'+c.id.slice(0,8);
+  const cid='card-'+c.id.slice(0,8);
+  const isFav=favs.has(c.id);
+  const sn=c.n.replace(/'/g,"\\'"),si=c.id.replace(/'/g,"\\'");
+  const lg=c.lo?`<img class="clg" src="${c.lo}" loading="lazy" onerror="this.style.display='none';this.nextSibling.style.display='flex'"><div class="clb" style="display:none">${c.n.slice(0,5)}</div>`:`<div class="clb">${c.n.slice(0,5)}</div>`;
+  return `<div class="cc${isFav?' is-fav':''}" id="${cid}">
+    <div class="clw">${lg}<span class="csb">${c.i||'📺'}</span></div>
+    <div class="ci">
+      <div class="cn" title="${c.n}">${c.n}</div>
+      <div class="cm"><span class="cs">${c.s}</span>${c.q?`<span class="cq ${qc(c.q)}">${c.q}</span>`:''}</div>
+    </div>
+    <div class="ca">
+      <div class="ca-top">
+        <button class="bpl" onclick="oMo('${sn}','${si}')">▶ ABRIR</button>
+        <button class="bfav${isFav?' on':''}" id="${fid}" onclick="toggleFav('${si}')" title="${isFav?'Quitar de favoritos':'Añadir a favoritos'}">${isFav?'★':'☆'}</button>
+      </div>
+      <button class="bcp" id="${bid}" onclick="cpL('${si}','${bid}')">📋 COPIAR ENLACE</button>
+    </div>
+  </div>`;
+}
+
+function render(){
+  const el=document.getElementById('main');
+
+  // FAVORITOS
+  if(curGrp==='FAVORITOS'){
+    if(favs.size===0){
+      el.innerHTML=`<div class="fav-empty">
+        <div class="fav-empty-i">⭐</div>
+        <div class="fav-empty-t">Sin favoritos aún</div>
+        <div class="fav-empty-s">Pulsa <strong>☆</strong> en cualquier canal<br>para guardarlo aquí</div>
+      </div>`;
+      return;
+    }
+    // Busca en AMBAS listas para mostrar todos los favoritos
+    const allChannels=[...DB.newera,...DB.elcano];
+    const seen=new Set();
+    const favChannels=[];
+    allChannels.forEach(c=>{
+      if(favs.has(c.id)&&!seen.has(c.id)){seen.add(c.id);favChannels.push(c);}
+    });
+    el.innerHTML=`<div class="cah"><span class="cai">⭐</span><div class="cat">FAVORITOS</div><div class="cac">${favChannels.length} guardados</div></div><div class="cg">${favChannels.map(cardHTML).join('')}</div>`;
+    return;
+  }
+
+  const fil=DB[curLista].filter(c=>{
+    const mg=curGrp==='TODOS'||c.g===curGrp;
+    const q=srch.toLowerCase();
+    return mg&&(!q||c.n.toLowerCase().includes(q)||c.g.toLowerCase().includes(q)||c.s.toLowerCase().includes(q));
+  });
+  if(!fil.length){el.innerHTML=`<div class="empty"><div class="empty-i">📭</div><div class="empty-t">Sin canales</div></div>`;return;}
+  if(curGrp==='TODOS'&&!srch){
+    const bg={};fil.forEach(c=>{if(!bg[c.g])bg[c.g]=[];bg[c.g].push(c);});
+    const ord=TO.filter(g=>g!=='TODOS'&&g!=='FAVORITOS'&&bg[g]);
+    Object.keys(bg).forEach(g=>{if(!ord.includes(g))ord.push(g);});
+    el.innerHTML=ord.map(g=>`<div style="margin-bottom:20px"><div class="cah"><span class="cai">${GI[g]||'📺'}</span><div class="cat">${g}</div><div class="cac">${bg[g].length}</div></div><div class="cg">${bg[g].map(cardHTML).join('')}</div></div>`).join('');
+  }else{
+    const ic=curGrp!=='TODOS'?(GI[curGrp]||'📺'):'🔍';
+    const t=curGrp==='TODOS'?'BÚSQUEDA':curGrp;
+    el.innerHTML=`<div class="cah"><span class="cai">${ic}</span><div class="cat">${t}</div><div class="cac">${fil.length}</div></div><div class="cg">${fil.map(cardHTML).join('')}</div>`;
+  }
+}
+
+// MODAL
+function oMo(n,id){moUrl=`acestream://${id}`;document.getElementById('moT').textContent=n;document.getElementById('moL').textContent=moUrl;document.getElementById('moA').href=moUrl;document.getElementById('moC').textContent='📋 COPIAR';document.getElementById('mov').classList.add('open');}
+function cMo(){document.getElementById('mov').classList.remove('open');}
+function cpMo(){doCopy(moUrl,()=>{document.getElementById('moC').textContent='✓';setTimeout(()=>document.getElementById('moC').textContent='📋 COPIAR',2000);});}
+function cpL(id,bid){doCopy(`acestream://${id}`,()=>{const b=document.getElementById(bid);if(b){const p=b.textContent;b.textContent='✓ Copiado';b.classList.add('ok');setTimeout(()=>{b.textContent=p;b.classList.remove('ok');},1500);}});}
+function doCopy(t,cb){const ok=()=>{showToast('✓ Copiado');if(cb)cb();};navigator.clipboard?navigator.clipboard.writeText(t).then(ok).catch(()=>{fbC(t);ok();}):( fbC(t),ok());}
+function fbC(t){const a=document.createElement('textarea');a.value=t;a.style.cssText='position:fixed;opacity:0;left:-9999px';document.body.appendChild(a);a.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(a);}
+function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2500);}
+
+document.getElementById('srch').addEventListener('input',function(){srch=this.value.trim();if(srch){curGrp='TODOS';buildTabs();}render();});
+document.getElementById('mov').addEventListener('click',e=>{if(e.target===document.getElementById('mov'))cMo();});
+
+// INIT
+loadFavs();
+buildStats();
+buildTabs();
+render();
+
+// ═══════════════════════════════════════════════════
+// PWA
+// ═══════════════════════════════════════════════════
+(function(){
+  const m={
+    name:"SOCRAM TV",short_name:"SOCRAM TV",
+    description:"Canales Acestream y favoritos",
+    start_url:"./socram-tv.html",display:"standalone",
+    background_color:"#0a0a0f",theme_color:"#e8192c",orientation:"any",
+    icons:[
+      {src:"https://raw.githubusercontent.com/socramtv/SocramAce/refs/heads/main/icon-192.png",sizes:"192x192",type:"image/png",purpose:"any maskable"},
+      {src:"https://raw.githubusercontent.com/socramtv/SocramAce/refs/heads/main/icon-512.png",sizes:"512x512",type:"image/png",purpose:"any maskable"}
+    ]
+  };
+  const b=new Blob([JSON.stringify(m)],{type:'application/manifest+json'});
+  document.getElementById('mf').href=URL.createObjectURL(b);
+})();
+
+if('serviceWorker' in navigator){
+  const sw=`const V='sv9';
+self.addEventListener('install',e=>{e.waitUntil(self.skipWaiting())});
+self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==V).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
+self.addEventListener('fetch',e=>{
+  if(!e.request.url.startsWith('http')||e.request.method!=='GET')return;
+  e.respondWith(fetch(e.request).then(r=>{if(r.ok&&e.request.destination==='document'){const c=r.clone();caches.open(V).then(ch=>ch.put(e.request,c))}return r}).catch(()=>caches.match(e.request)));
+});`;
+  navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw],{type:'application/javascript'})),{scope:'./'}).catch(()=>{});
+}
+
+let dp=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;document.getElementById('ib').classList.add('show');});
+document.getElementById('bInst').addEventListener('click',()=>{
+  if(dp){dp.prompt();dp.userChoice.then(()=>{dp=null;document.getElementById('ib').classList.remove('show');});}
+  else alert('📲 Instalar SOCRAM TV:\n\nAndroid Chrome: menú ⋮ → Añadir a pantalla de inicio\niOS Safari: ⎙ compartir → En el inicio\nPC Chrome/Edge: ➕ en la barra de dirección');
+});
+document.getElementById('bDis').addEventListener('click',()=>{document.getElementById('ib').classList.remove('show');sessionStorage.setItem('ib_d','1');});
+window.addEventListener('appinstalled',()=>{document.getElementById('ib').classList.remove('show');showToast('✓ SOCRAM TV instalada');});
+if(!window.matchMedia('(display-mode:standalone)').matches&&!sessionStorage.getItem('ib_d'))
+  setTimeout(()=>document.getElementById('ib').classList.add('show'),2000);
+</script>
+</body>
+</html>
