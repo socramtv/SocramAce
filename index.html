@@ -198,6 +198,73 @@ footer span{color:var(--red)}
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(18px);background:var(--dk3);border:1px solid var(--br);border-left:3px solid var(--gn);border-radius:8px;padding:9px 16px;font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:1px;color:var(--gn);opacity:0;transition:all .28s;z-index:9999;pointer-events:none;white-space:nowrap}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
+/* ══ MODAL CARGA LISTA M3U ══ */
+.m3u-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:700;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(6px)}
+.m3u-overlay.open{display:flex}
+.m3u-box{background:var(--dk2);border:1px solid var(--br);border-top:2px solid var(--bl);border-radius:14px;padding:22px;max-width:500px;width:100%;animation:mi .22s ease;position:relative}
+body.light .m3u-box{background:#fff}
+.m3u-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;margin-bottom:6px;color:var(--tx);display:flex;align-items:center;gap:8px}
+.m3u-title .badge{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:1px;background:rgba(74,158,255,.15);border:1px solid rgba(74,158,255,.35);color:var(--bl);padding:3px 8px;border-radius:4px;font-weight:700}
+.m3u-sub{font-family:'Barlow Condensed',sans-serif;font-size:12px;color:var(--mu);letter-spacing:.5px;margin-bottom:18px}
+
+.m3u-section{margin-bottom:16px}
+.m3u-section-title{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--mu);text-transform:uppercase;margin-bottom:8px;padding-left:2px}
+
+/* URL input */
+.m3u-url-row{display:flex;gap:6px}
+.m3u-url-input{flex:1;background:var(--dk3);border:1px solid var(--br);border-radius:8px;padding:10px 13px;color:var(--tx);font-family:'Barlow',sans-serif;font-size:13px;outline:none;transition:border-color .2s;min-width:0}
+body.light .m3u-url-input{background:#f4f6fa}
+.m3u-url-input:focus{border-color:var(--bl)}
+.m3u-url-input::placeholder{color:var(--mu);font-size:12px}
+.m3u-load-btn{background:var(--bl);border:none;border-radius:8px;padding:10px 14px;color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all .2s;white-space:nowrap;flex-shrink:0}
+.m3u-load-btn:hover{background:#2d7ae0;transform:scale(1.03)}
+.m3u-load-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+/* Divider */
+.m3u-or{display:flex;align-items:center;gap:10px;margin:14px 0}
+.m3u-or-line{flex:1;height:1px;background:var(--br)}
+.m3u-or-txt{font-family:'Barlow Condensed',sans-serif;font-size:11px;color:var(--mu);letter-spacing:1px}
+
+/* File drop */
+.m3u-drop{border:2px dashed var(--br);border-radius:10px;padding:20px 16px;text-align:center;cursor:pointer;transition:all .2s;position:relative}
+.m3u-drop:hover,.m3u-drop.drag{border-color:var(--bl);background:rgba(74,158,255,.06)}
+.m3u-drop input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.m3u-drop-icon{font-size:28px;margin-bottom:6px}
+.m3u-drop-txt{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600;color:var(--tx);letter-spacing:.5px}
+.m3u-drop-sub{font-family:'Barlow Condensed',sans-serif;font-size:11px;color:var(--mu);margin-top:3px}
+
+/* Saved lists */
+.m3u-saved{display:flex;flex-direction:column;gap:5px;max-height:130px;overflow-y:auto}
+.m3u-saved::-webkit-scrollbar{width:4px}
+.m3u-saved::-webkit-scrollbar-track{background:transparent}
+.m3u-saved::-webkit-scrollbar-thumb{background:var(--br);border-radius:2px}
+.m3u-saved-item{display:flex;align-items:center;gap:8px;background:var(--cd);border:1px solid var(--br);border-radius:7px;padding:7px 10px;cursor:pointer;transition:all .2s}
+.m3u-saved-item:hover{border-color:var(--bl);background:rgba(74,158,255,.08)}
+.m3u-saved-name{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:600;color:var(--tx);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.m3u-saved-cnt{font-family:'Barlow Condensed',sans-serif;font-size:10px;color:var(--mu)}
+.m3u-saved-del{background:none;border:none;color:var(--mu);font-size:14px;cursor:pointer;padding:0 2px;line-height:1;flex-shrink:0}
+.m3u-saved-del:hover{color:var(--red)}
+.m3u-saved-empty{font-family:'Barlow Condensed',sans-serif;font-size:12px;color:var(--mu);text-align:center;padding:12px 0;letter-spacing:.5px}
+
+/* Progress */
+.m3u-progress{display:none;margin-top:14px}
+.m3u-progress.show{display:block}
+.m3u-prog-txt{font-family:'Barlow Condensed',sans-serif;font-size:12px;color:var(--mu);margin-bottom:6px;letter-spacing:.5px}
+.m3u-prog-bar{height:4px;background:var(--br);border-radius:2px;overflow:hidden}
+.m3u-prog-fill{height:100%;background:var(--bl);border-radius:2px;transition:width .3s;width:0%}
+
+/* Actions */
+.m3u-actions{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+.m3u-close-btn{flex:1;padding:10px 14px;border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;cursor:pointer;border:1px solid var(--br);background:var(--dk3);color:var(--tx);transition:all .2s}
+body.light .m3u-close-btn{background:#eee}
+.m3u-close-btn:hover{border-color:var(--mu)}
+
+/* lb-btn para lista 3 */
+.lb-btn-l3{background:rgba(0,200,150,.12)!important;border-color:rgba(0,200,150,.35)!important;color:var(--gn)!important}
+.lb-btn-l3.on{background:rgba(0,200,150,.22)!important;border-color:var(--gn)!important;color:var(--gn)!important}
+.lb-btn-add{background:rgba(74,158,255,.1)!important;border-style:dashed!important;border-color:rgba(74,158,255,.4)!important;color:var(--bl)!important;flex:0!important;padding:5px 10px!important;white-space:nowrap}
+.lb-btn-add:hover{background:rgba(74,158,255,.18)!important;border-style:solid!important}
+
 @media(max-width:580px){
   .cg{grid-template-columns:1fr}
   .main{padding:10px 10px 30px}
@@ -226,8 +293,56 @@ footer span{color:var(--red)}
   <div class="lb-btns">
     <button class="lb-btn on" id="btnL1" onclick="setLista('newera')">🔴 Lista 1 · NEW ERA</button>
     <button class="lb-btn" id="btnL2" onclick="setLista('elcano')">🟣 Lista 2 · EL CANO</button>
+    <button class="lb-btn lb-btn-l3" id="btnL3" onclick="setLista('custom')" style="display:none">🟢 <span id="l3name">Lista 3</span></button>
+    <button class="lb-btn lb-btn-add" id="btnAddLista" onclick="openM3U()" title="Cargar lista M3U externa">➕ M3U</button>
   </div>
   <div class="lb-cnt"><b id="lbCnt">0</b> canales</div>
+</div>
+
+<!-- MODAL CARGA M3U -->
+<div class="m3u-overlay" id="m3uOverlay">
+  <div class="m3u-box">
+    <div class="m3u-title">📡 LISTA 3 PERSONALIZADA <span class="badge">M3U</span></div>
+    <div class="m3u-sub">Carga cualquier lista M3U con canales Acestream</div>
+
+    <!-- URL -->
+    <div class="m3u-section">
+      <div class="m3u-section-title">🌐 Desde URL</div>
+      <div class="m3u-url-row">
+        <input class="m3u-url-input" id="m3uUrl" type="url" placeholder="https://ejemplo.com/lista.m3u" autocomplete="off" autocorrect="off">
+        <button class="m3u-load-btn" id="m3uLoadUrlBtn" onclick="loadM3UFromUrl()">⬇ CARGAR</button>
+      </div>
+    </div>
+
+    <div class="m3u-or"><div class="m3u-or-line"></div><div class="m3u-or-txt">O</div><div class="m3u-or-line"></div></div>
+
+    <!-- ARCHIVO -->
+    <div class="m3u-section">
+      <div class="m3u-section-title">📁 Desde archivo local</div>
+      <div class="m3u-drop" id="m3uDrop">
+        <input type="file" id="m3uFile" accept=".m3u,.m3u8,.txt" onchange="loadM3UFromFile(this)">
+        <div class="m3u-drop-icon">📂</div>
+        <div class="m3u-drop-txt">Arrastra o pulsa para seleccionar</div>
+        <div class="m3u-drop-sub">.m3u · .m3u8 · .txt</div>
+      </div>
+    </div>
+
+    <!-- LISTAS GUARDADAS -->
+    <div class="m3u-section" id="m3uSavedSection">
+      <div class="m3u-section-title">💾 Listas guardadas</div>
+      <div class="m3u-saved" id="m3uSavedList"></div>
+    </div>
+
+    <!-- PROGRESO -->
+    <div class="m3u-progress" id="m3uProgress">
+      <div class="m3u-prog-txt" id="m3uProgTxt">Cargando...</div>
+      <div class="m3u-prog-bar"><div class="m3u-prog-fill" id="m3uProgFill"></div></div>
+    </div>
+
+    <div class="m3u-actions">
+      <button class="m3u-close-btn" onclick="closeM3U()">✕ Cerrar</button>
+    </div>
+  </div>
 </div>
 
 <!-- DESCARGA ACESTREAM -->
@@ -506,19 +621,22 @@ const TO=['TODOS','FAVORITOS','MUNDIAL','LA LIGA','LIGA DE CAMPEONES','MOVISTAR 
 let curLista='newera', curGrp='TODOS', srch='', moUrl='';
 const qc=q=>q==='FHD'?'qf':q==='HD'?'qh':q==='4K'?'q4':q==='SD'?'qs':'';
 
+function getCurList(){return curLista==='custom'?DB.custom:(DB[curLista]||[]);}
+
 function buildStats(){
-  const gs=new Set(DB[curLista].map(c=>c.g));
-  document.getElementById('lbCnt').textContent=DB[curLista].length;
+  const list=getCurList();
+  const gs=new Set(list.map(c=>c.g));
+  document.getElementById('lbCnt').textContent=list.length;
   document.getElementById('stb').innerHTML=
-    `<div class="sti"><span class="stn">${DB[curLista].length}</span><span class="stl">CANALES</span></div>`+
+    `<div class="sti"><span class="stn">${list.length}</span><span class="stl">CANALES</span></div>`+
     `<div class="sti"><span class="stn">${gs.size}</span><span class="stl">GRUPOS</span></div>`+
-    `<div class="sti"><span class="stn">${DB[curLista].filter(c=>c.q==='FHD').length}</span><span class="stl">FHD</span></div>`+
-    `<div class="sti"><span class="stn">${DB[curLista].filter(c=>c.q==='4K').length}</span><span class="stl">4K</span></div>`+
+    `<div class="sti"><span class="stn">${list.filter(c=>c.q==='FHD').length}</span><span class="stl">FHD</span></div>`+
+    `<div class="sti"><span class="stn">${list.filter(c=>c.q==='4K').length}</span><span class="stl">4K</span></div>`+
     `<div class="sti"><span class="stn">${favs.size}</span><span class="stl">FAVORITOS</span></div>`;
 }
 
 function buildTabs(){
-  const used=new Set(DB[curLista].map(c=>c.g));
+  const used=new Set(getCurList().map(c=>c.g));
   const tabs=TO.filter(g=>g==='TODOS'||g==='FAVORITOS'||used.has(g));
   document.getElementById('tw').innerHTML=tabs.map(g=>{
     const ic=GI[g]||'📺';
@@ -535,9 +653,11 @@ function setLista(k){
   curLista=k;
   document.getElementById('btnL1').classList.toggle('on',k==='newera');
   document.getElementById('btnL2').classList.toggle('on',k==='elcano');
+  document.getElementById('btnL3').classList.toggle('on',k==='custom');
   if(curGrp!=='FAVORITOS'){curGrp='TODOS';srch='';document.getElementById('srch').value='';}
   buildStats();buildTabs();render();
-  showToast(`✓ ${k==='newera'?'Lista 1 · NEW ERA':'Lista 2 · EL CANO'} — ${DB[k].length} canales`);
+  const names={'newera':'Lista 1 · NEW ERA','elcano':'Lista 2 · EL CANO','custom':'Lista 3 · '+customListName};
+  showToast(`✓ ${names[k]||k} — ${getCurList().length} canales`);
 }
 
 function cardHTML(c){
@@ -576,8 +696,8 @@ function render(){
       </div>`;
       return;
     }
-    // Busca en AMBAS listas para mostrar todos los favoritos
-    const allChannels=[...DB.newera,...DB.elcano];
+    // Busca en TODAS las listas para mostrar todos los favoritos
+    const allChannels=[...DB.newera,...DB.elcano,...(DB.custom||[])];
     const seen=new Set();
     const favChannels=[];
     allChannels.forEach(c=>{
@@ -587,7 +707,7 @@ function render(){
     return;
   }
 
-  const fil=DB[curLista].filter(c=>{
+  const fil=getCurList().filter(c=>{
     const mg=curGrp==='TODOS'||c.g===curGrp;
     const q=srch.toLowerCase();
     return mg&&(!q||c.n.toLowerCase().includes(q)||c.g.toLowerCase().includes(q)||c.s.toLowerCase().includes(q));
@@ -616,6 +736,222 @@ function showToast(m){const t=document.getElementById('toast');t.textContent=m;t
 
 document.getElementById('srch').addEventListener('input',function(){srch=this.value.trim();if(srch){curGrp='TODOS';buildTabs();}render();});
 document.getElementById('mov').addEventListener('click',e=>{if(e.target===document.getElementById('mov'))cMo();});
+
+// ═══════════════════════════════════════════════════
+// LISTA 3 — CARGA M3U EXTERNA
+// ═══════════════════════════════════════════════════
+DB.custom=[];
+let customListName='Mi Lista';
+const M3U_SAVED_KEY='socram_m3u_saved';
+const M3U_PROXIES=[
+  u=>`https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
+  u=>`https://corsproxy.io/?${encodeURIComponent(u)}`,
+  u=>`https://thingproxy.freeboard.io/fetch/${encodeURIComponent(u)}`,
+  u=>u, // directo
+];
+
+function openM3U(){
+  document.getElementById('m3uOverlay').classList.add('open');
+  renderSavedLists();
+  resetProgress();
+}
+function closeM3U(){document.getElementById('m3uOverlay').classList.remove('open');}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeM3U();});
+
+function setProgress(txt,pct,show=true){
+  const pg=document.getElementById('m3uProgress');
+  pg.classList.toggle('show',show);
+  if(show){
+    document.getElementById('m3uProgTxt').textContent=txt;
+    document.getElementById('m3uProgFill').style.width=pct+'%';
+  }
+}
+function resetProgress(){setProgress('',0,false);}
+
+// ── PARSER M3U ──
+function parseM3UText(text){
+  const channels=[];
+  const lines=text.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
+  let cur=null;
+  for(const l of lines){
+    if(l.startsWith('#EXTINF')){
+      const logo=(l.match(/tvg-logo="([^"]*)"/)||[])[1]||'';
+      const grp=(l.match(/group-title="([^"]*)"/)||[])[1]||'OTROS';
+      const name=l.split(',').slice(-1)[0].trim();
+      cur={n:name,g:grp.toUpperCase().trim(),lo:logo,q:'',s:'LISTA 3',i:sportIcon(name)};
+      // Detect quality from name
+      const upper=name.toUpperCase();
+      if(upper.includes('4K'))cur.q='4K';
+      else if(upper.includes('FHD')||upper.includes('1080'))cur.q='FHD';
+      else if(upper.includes('HD')||upper.includes('720'))cur.q='HD';
+      else if(upper.includes('SD')||upper.includes('480'))cur.q='SD';
+    } else if(cur){
+      // Extract acestream ID from various URL formats
+      let id=null;
+      const mAce=l.match(/acestream:\/\/([a-f0-9]{40})/i);
+      const mHttp=l.match(/[?&]id=([a-f0-9]{40})/i);
+      const mPath=l.match(/\/([a-f0-9]{40})(?:[?/]|$)/i);
+      if(mAce)id=mAce[1];
+      else if(mHttp)id=mHttp[1];
+      else if(mPath)id=mPath[1];
+      if(id){cur.id=id.toLowerCase();channels.push(cur);}
+      cur=null;
+    }
+  }
+  return channels;
+}
+
+function sportIcon(n){
+  const k=n.toLowerCase();
+  if(k.includes('f1')||k.includes('formula'))return '🏎️';
+  if(k.includes('moto'))return '🏍️';
+  if(k.includes('tenis')||k.includes('tennis'))return '🎾';
+  if(k.includes('basket')||k.includes('nba'))return '🏀';
+  if(k.includes('golf'))return '⛳';
+  if(k.includes('ufc')||k.includes('box'))return '🥊';
+  if(k.includes('mundial')||k.includes('world'))return '🌍';
+  if(k.includes('disney')||k.includes('kids'))return '🎠';
+  if(k.includes('cine')||k.includes('film')||k.includes('movie'))return '🎬';
+  return '📺';
+}
+
+function applyCustomList(channels,name){
+  if(!channels.length){showToast('⚠ No se encontraron canales Acestream');return;}
+  DB.custom=channels;
+  customListName=name;
+  document.getElementById('l3name').textContent=name.slice(0,14)+(name.length>14?'…':'');
+  document.getElementById('btnL3').style.display='';
+  closeM3U();
+  setLista('custom');
+  showToast(`✓ ${name} — ${channels.length} canales cargados`);
+  // Save to saved list
+  saveToSavedLists(name,channels);
+}
+
+// ── CARGAR DESDE URL ──
+async function loadM3UFromUrl(){
+  const url=document.getElementById('m3uUrl').value.trim();
+  if(!url){showToast('⚠ Introduce una URL');return;}
+  const btn=document.getElementById('m3uLoadUrlBtn');
+  btn.disabled=true;
+  setProgress('Conectando...',10);
+  let text=null;
+  for(const [i,proxy] of M3U_PROXIES.entries()){
+    try{
+      setProgress(`Intentando proxy ${i+1}/${M3U_PROXIES.length}...`,20+i*20);
+      const ctrl=new AbortController();
+      const tid=setTimeout(()=>ctrl.abort(),12000);
+      const r=await fetch(proxy(url),{signal:ctrl.signal});
+      clearTimeout(tid);
+      if(r.ok){
+        setProgress('Descargando...',80);
+        text=await r.text();
+        if(text.includes('#EXTM3U')||text.includes('#EXTINF'))break;
+        text=null;
+      }
+    }catch(e){/* siguiente proxy */}
+  }
+  btn.disabled=false;
+  if(!text){setProgress('❌ No se pudo cargar la lista. Prueba con archivo local.',100);return;}
+  setProgress('Procesando canales...',90);
+  const channels=parseM3UText(text);
+  setProgress(`✓ ${channels.length} canales encontrados`,100);
+  const name=url.split('/').pop().replace(/\.m3u.*/,'').slice(0,20)||'Mi Lista';
+  setTimeout(()=>applyCustomList(channels,name),400);
+}
+
+// ── CARGAR DESDE ARCHIVO ──
+function loadM3UFromFile(input){
+  const file=input.files[0];
+  if(!file)return;
+  setProgress('Leyendo archivo...',30);
+  const reader=new FileReader();
+  reader.onload=e=>{
+    setProgress('Procesando...',70);
+    const text=e.target.result;
+    const channels=parseM3UText(text);
+    const name=file.name.replace(/\.m3u.*/i,'').slice(0,20)||'Mi Lista';
+    setProgress(`✓ ${channels.length} canales encontrados`,100);
+    setTimeout(()=>applyCustomList(channels,name),300);
+  };
+  reader.onerror=()=>setProgress('❌ Error al leer el archivo',100);
+  reader.readAsText(file,'utf-8');
+}
+
+// ── LISTAS GUARDADAS ──
+function saveToSavedLists(name,channels){
+  try{
+    let saved=JSON.parse(localStorage.getItem(M3U_SAVED_KEY)||'[]');
+    // Remove duplicate name
+    saved=saved.filter(s=>s.name!==name);
+    // Save only IDs to avoid huge storage (rebuild channels from m3u on load)
+    saved.unshift({name,count:channels.length,data:channels.slice(0,500)});
+    // Keep max 5 saved lists
+    saved=saved.slice(0,5);
+    localStorage.setItem(M3U_SAVED_KEY,JSON.stringify(saved));
+  }catch(e){}
+}
+
+function renderSavedLists(){
+  let saved=[];
+  try{saved=JSON.parse(localStorage.getItem(M3U_SAVED_KEY)||'[]');}catch(e){}
+  const el=document.getElementById('m3uSavedList');
+  const sec=document.getElementById('m3uSavedSection');
+  if(!saved.length){
+    el.innerHTML=`<div class="m3u-saved-empty">Sin listas guardadas aún</div>`;
+    return;
+  }
+  sec.style.display='';
+  el.innerHTML=saved.map((s,i)=>`
+    <div class="m3u-saved-item" onclick="loadSaved(${i})">
+      <span style="font-size:14px">📋</span>
+      <span class="m3u-saved-name">${s.name}</span>
+      <span class="m3u-saved-cnt">${s.count} canales</span>
+      <button class="m3u-saved-del" onclick="deleteSaved(event,${i})" title="Eliminar">✕</button>
+    </div>`).join('');
+}
+
+function loadSaved(i){
+  try{
+    const saved=JSON.parse(localStorage.getItem(M3U_SAVED_KEY)||'[]');
+    if(saved[i]){
+      DB.custom=saved[i].data||[];
+      customListName=saved[i].name;
+      document.getElementById('l3name').textContent=customListName.slice(0,14);
+      document.getElementById('btnL3').style.display='';
+      closeM3U();
+      setLista('custom');
+      showToast(`✓ ${customListName} — ${DB.custom.length} canales`);
+    }
+  }catch(e){}
+}
+
+function deleteSaved(e,i){
+  e.stopPropagation();
+  try{
+    let saved=JSON.parse(localStorage.getItem(M3U_SAVED_KEY)||'[]');
+    saved.splice(i,1);
+    localStorage.setItem(M3U_SAVED_KEY,JSON.stringify(saved));
+    renderSavedLists();
+    showToast('✓ Lista eliminada');
+  }catch(e){}
+}
+
+// Drag & drop
+(function(){
+  const drop=document.getElementById('m3uDrop');
+  if(!drop)return;
+  drop.addEventListener('dragover',e=>{e.preventDefault();drop.classList.add('drag');});
+  drop.addEventListener('dragleave',()=>drop.classList.remove('drag'));
+  drop.addEventListener('drop',e=>{
+    e.preventDefault();drop.classList.remove('drag');
+    const file=e.dataTransfer.files[0];
+    if(file){const fi=document.getElementById('m3uFile');fi.files=e.dataTransfer.files;loadM3UFromFile(fi);}
+  });
+})();
+
+// Close on overlay click
+document.getElementById('m3uOverlay').addEventListener('click',function(e){if(e.target===this)closeM3U();});
 
 // ── THEME TOGGLE ──
 function toggleTheme(){
